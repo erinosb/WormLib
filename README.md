@@ -17,20 +17,25 @@
 ## Features
 
 - **Image I/O**: Load DeltaVision (.dv), Nikon (.nd2), and TIFF images with multi-channel extraction
+- **YAML configuration**: Describe channels, microscope parameters, and pipeline steps in a single YAML file with semantic channel roles
+- **N-channel RNA support**: Analyze any number of RNA channels — not limited to two
 - **Embryo segmentation**: Cellpose-based whole-embryo detection with size-outlier filtering
 - **Cell segmentation**: Automated nucleus-cytosol pairing with diameter optimization (≤4-cell embryos)
+- **Nuclear-only segmentation**: Automatic fallback when no brightfield/reference image is available
 - **Cell classification**: Random Forest classifiers for blastomere identity prediction
   - **2-cell stage**: AB vs P1 with proximity fail-safe
   - **4-cell stage**: ABa, ABp, EMS, P2 with ellipse-based positional assignment
+- **Graceful fallback chain**: Cell segmentation → whole-embryo segmentation → nuclear-only segmentation → whole-image mask
 - **smFISH spot detection**: BigFISH pipeline with LoG filtering, automated thresholding, and dense region decomposition
 - **Cluster detection**: Identify transcription sites and mRNA clusters
-- **Per-cell quantification**: Spot counting per segmented cell with classifier labels
+- **Per-cell / per-region quantification**: Spot counting per segmented cell (with classifier labels) or per segmentation region
 - **Spatial mRNA analysis**:
   - Grid-based mRNA abundance heatmaps
   - RNA density profiles along the anterior-posterior (AP) axis
   - Line scan intensity analysis with ROI restriction
 - **PDF report generation**: Automated reports with figures, tables, and analysis logs
 - **HPC batch processing**: SLURM array job support for high-throughput analysis
+- **CLI with argparse**: `python src/wormlib.py --config config.yml [input] [output]`
 
 ---
 
@@ -66,6 +71,7 @@ pip install torch torchvision
 ### Verify Installation
 
 ```python
+import yaml
 import bigfish
 import cellpose
 from scipy.ndimage import label
@@ -92,7 +98,7 @@ are working on your computer.
 
 For the full pipeline, WormLib expects microscopy data with:
 
-- one or two smFISH RNA channels
+- one or more smFISH RNA channels
 - a nuclear channel, typically DAPI
 - a brightfield/reference image for embryo and cell segmentation
 
@@ -121,8 +127,9 @@ match the bundled example:
 | 2 | `FITC` | optional channel |
 | 3 | `DAPI` | nuclei |
 
-If your channel order is different, set `CY5_INDEX`, `MCHERRY_INDEX`,
-`FITC_INDEX`, and `DAPI_INDEX` before running the CLI.
+If your channel order is different, set the `index` field for each channel
+in your YAML config, or set `CY5_INDEX`, `MCHERRY_INDEX`, `FITC_INDEX`, and
+`DAPI_INDEX` environment variables when using the legacy env-var interface.
 
 #### Nikon `.nd2`
 
@@ -137,8 +144,8 @@ Channels are assigned in this zero-based order by default:
 | 3 | `DAPI` | nuclei |
 | 4 | `brightfield` | brightfield/reference |
 
-If a channel is missing, set its name to `nothing` or `None`. For example,
-`mCherry=nothing` tells WormLib not to load or analyze a second RNA channel.
+If a channel is missing, set its `name` to `null` in the YAML config, or set
+it to `nothing` or `None` in the environment-variable interface.
 
 TIFF loading is available, but the full segmentation + smFISH workflow is most
 straightforward with DV or ND2 data that includes both nuclear and brightfield
@@ -146,15 +153,17 @@ information.
 
 #### Choosing Channels
 
-WormLib now uses semantic channel roles. A config file tells WormLib which image
-channel is nuclei, which image channel is brightfield/reference, and which image
-channels are RNA channels.
+WormLib uses semantic channel roles. A YAML config file tells WormLib which
+image channel is nuclei, which is brightfield/reference, and which are RNA
+channels.
 
 | Setting | Meaning | Example |
 |---------|---------|---------|
 | `channels.rna[].name` | The RNA label used in output files and plots | `par-3` |
 | `channels.rna[].fluorophore` | The physical fluorophore or microscope channel name, for human readability | `Alexa647` |
 | `channels.rna[].index` | The zero-based position of that RNA in the image stack | `0` |
+| `channels.rna[].spot_radius_nm` | PSF radius in nm as `[Z, Y, X]` | `[1409, 340, 340]` |
+| `channels.rna[].detection_color` | Color used for spot detection overlays | `red` |
 | `channels.nuclei.index` | The zero-based channel position used for nuclei segmentation | `3` |
 | `channels.brightfield.index` | The zero-based channel position used for brightfield/reference, if it is inside the stack | `4` |
 
@@ -215,9 +224,9 @@ Different parts of the pipeline need different channels:
 | Load and inspect channels | at least one supported image file | any channel can be skipped | Produces a channel overview for loaded channels. |
 | Whole-embryo segmentation | `brightfield` and `DAPI` | RNA channels | The current embryo segmentation function uses brightfield for the embryo boundary and DAPI for nuclei. |
 | Cell segmentation and blastomere classification | `brightfield` and `DAPI` | RNA channels | Classification only runs when segmentation detects the expected 2-cell or 4-cell mask count. |
-| Spot detection in segmented embryo/cells | at least one RNA channel plus a segmentation mask | second RNA channel | Best for total or per-cell/region molecule counts. |
-| Spot detection with DAPI only, no brightfield | one RNA channel and `DAPI` | second RNA channel | WormLib uses nuclear masks, so counts are nuclear-region counts, not whole-cell counts. |
-| Spot detection with RNA only | one RNA channel | all segmentation channels | WormLib uses one whole-image mask, so only whole-image counts are meaningful. |
+| Spot detection in segmented embryo/cells | at least one RNA channel plus a segmentation mask | additional RNA channels | Best for total or per-cell/region molecule counts. |
+| Spot detection with DAPI only, no brightfield | one RNA channel and `DAPI` | additional RNA channels | WormLib uses nuclear masks, so counts are nuclear-region counts, not whole-cell counts. |
+| Spot detection with RNA only | one RNA channel | all segmentation channels | WormLib creates a whole-image mask, so only whole-image counts are meaningful. |
 
 For true whole-embryo segmentation, **brightfield/reference and DAPI are both
 necessary** in the current pipeline. If either one is missing, WormLib can still
@@ -309,23 +318,24 @@ channels:
 
 ```python
 # Define image path and microscope parameters
-image_path = Path("/path/to/embryo_001_R3D.dv")
-image_ref = Path("/path/to/embryo_001_R3D_REF.dv")
-output_directory = Path("/path/to/results/embryo_001")
+image_path = main_dir / "data/08_dv/230521_N2_08_R3D.dv"
+image_ref = main_dir / "data/08_dv/230521_N2_08_R3D_REF.dv"
+output_directory = current_dir / "output_temp"
 
 voxel_size = (1448, 450, 450)        # Z, Y, X in nm
 spot_radius_ch0 = (1409, 340, 340)   # PSF for Cy5 channel
 spot_radius_ch1 = (1283, 310, 310)   # PSF for mCherry channel
 
-# Channel assignments
+# Channel assignments (set to None to skip a channel)
 channel_names = {
     "Cy5": "mRNA1",
-    "mCherry": None,
+    "mCherry": "mRNA2",
     "FITC": None,
     "DAPI": "DAPI",
     "brightfield": "brightfield",
 }
 
+# Zero-based channel indices in the image stack
 channel_indices = {
     "Cy5": 0,
     "mCherry": 1,
@@ -357,6 +367,7 @@ Each output directory can include:
 |--------|-------------|
 | `channels_*.png` | Loaded channel overview |
 | `cell_segmentation_*.png` or `embryo_segmentation_*.png` | Segmentation result |
+| `nuclear_segmentation_*.png` | Nuclear-only segmentation (when no brightfield is available) |
 | `features_df_*.csv` | Cell morphology and classifier features |
 | `total_mRNA_counts_*.csv` | Total molecule counts per RNA channel |
 | `per_cell_mRNA_counts_*.csv` | Per-cell counts and predicted labels, when classification succeeds |
@@ -368,7 +379,9 @@ Each output directory can include:
 | `report.pdf` | Summary report with figures and tables |
 
 If cell segmentation or blastomere classification is not reliable for an image,
-WormLib falls back to whole-embryo segmentation and skips per-cell labels.
+WormLib falls back to whole-embryo segmentation and skips per-cell labels. If
+neither cell nor embryo segmentation succeeds, spot detection can still run
+using a whole-image mask.
 
 ### HPC Batch Processing (SLURM)
 
@@ -384,21 +397,28 @@ sbatch --array=0-N examples/run-WormLib.sh /path/to/my_experiment
 ```
 
 Before submitting, edit `examples/run-WormLib.sh` to match your microscope
-calibration, channel names, and desired pipeline switches.
+calibration, channel names, channel indices, and desired pipeline switches.
+The SLURM script uses the legacy environment-variable interface.
 
 ---
 
 ## Analysis Pipeline
 
 ```text
+                     ┌──────────────┐
+                     │  YAML Config │
+                     │  or env vars │
+                     └──────┬───────┘
+                            ▼
 ┌──────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │  Image I/O   │───▶│  Segmentation    │───▶│  Classification │
-│  DV/ND2/TIFF │    │  Embryo + Cells  │    │  AB/P1 or 4-cell│
-└──────────────┘    └──────────────────┘    └────────┬────────┘
-                                                     │
-                    ┌──────────────────┐              │
-                    │  Spot Detection  │◀─────────────┘
+│  DV/ND2/TIFF │    │  Cell / Embryo / │    │  AB/P1 or 4-cell│
+└──────────────┘    │  Nuclear / None  │    └────────┬────────┘
+                    └──────────────────┘             │
+                    ┌──────────────────┐             │
+                    │  Spot Detection  │◀────────────┘
                     │  smFISH (BigFISH)│
+                    │  N RNA channels  │
                     └────────┬─────────┘
                              │
               ┌──────────────┼──────────────┐
@@ -416,6 +436,19 @@ calibration, channel names, and desired pipeline switches.
                    └──────────────┘
 ```
 
+**Segmentation fallback chain:**
+
+```text
+Cell segmentation (bf + DAPI)
+  ├─ success → classifier → spot detection
+  └─ fail ──▶ Whole-embryo segmentation (bf + DAPI)
+                ├─ success → spot detection (no per-cell labels)
+                └─ fail ──▶ Nuclear-only segmentation (DAPI only)
+                              ├─ success → spot detection (nuclear regions)
+                              └─ fail ──▶ Whole-image mask
+                                            └─ spot detection (image-level counts)
+```
+
 ---
 
 ## Project Structure
@@ -423,12 +456,16 @@ calibration, channel names, and desired pipeline switches.
 ```text
 WormLib/
 ├── src/
-│   └── wormlib.py                # Main analysis engine
+│   └── wormlib.py                # Main analysis engine and CLI entry point
 ├── examples/
 │   ├── wormlib_example.py        # Pipeline example script
 │   └── run-WormLib.sh            # SLURM batch script
 ├── config/
 │   └── examples/                 # Copy-and-edit YAML pipeline configs
+│       ├── two_rna_full.yml
+│       ├── one_rna_full.yml
+│       ├── dapi_one_rna_no_brightfield.yml
+│       └── rna_only_spot_detection.yml
 ├── models/                       # Trained ML classifiers
 │   ├── 2-cell_classification_RFmodel.joblib
 │   ├── 4-cell_classification_RFmodel.joblib
@@ -454,12 +491,14 @@ WormLib/
 | [BigFISH](https://github.com/fish-quant/big-fish) | smFISH spot detection & analysis |
 | [Cellpose](https://github.com/MouseLand/cellpose) | Deep learning cell segmentation |
 | [scikit-image](https://scikit-image.org/) | Image processing & morphology |
-| [scikit-learn](https://scikit-learn.org/) | Random Forest classifiers |
+| [scikit-learn](https://scikit-learn.org/) | Random Forest classifiers (transitive via joblib) |
 | [PyTorch](https://pytorch.org/) | GPU backend for Cellpose |
 | [OpenCV](https://opencv.org/) | Contour & ellipse fitting |
 | [nd2](https://github.com/tlambert03/nd2) | Nikon ND2 file reader |
 | [tifffile](https://github.com/cgohlke/tifffile) | TIFF file I/O |
+| [PyYAML](https://pyyaml.org/) | YAML configuration parsing |
 | [ReportLab](https://www.reportlab.com/) | PDF report generation |
+| [Pillow](https://python-pillow.org/) | Image handling for PDF reports |
 
 ---
 
