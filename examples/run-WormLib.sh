@@ -130,7 +130,7 @@ fi
 combined_line_scan_counts="${local_download_directory}/output/combined_line_scan_counts.csv"
 combined_line_scan_files=()
 
-for csv_file in "${local_download_directory}/output"/*/*_line_density_data.csv; do
+for csv_file in "${local_download_directory}/output"/*/*_line_density_data_*.csv; do
     combined_line_scan_files+=("$csv_file")
 done
 
@@ -138,7 +138,7 @@ if [[ ${#combined_line_scan_files[@]} -gt 0 ]]; then
     python - <<END
 import pandas as pd
 import glob
-csv_files = glob.glob("${local_download_directory}/output/*/*_line_density_data.csv")
+csv_files = glob.glob("${local_download_directory}/output/*/*_line_density_data_*.csv")
 combined_df = pd.concat([pd.read_csv(f) for f in csv_files], ignore_index=True)
 combined_df.to_csv("${combined_line_scan_counts}", index=False)
 print("Combined line scan data CSV saved at ${combined_line_scan_counts}")

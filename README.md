@@ -77,18 +77,18 @@ print("WormLib dependencies OK")
 
 ## Usage
 
-### Interactive Analysis (Jupyter Notebook)
+### Pipeline Example Script
 
 ```bash
 cd examples
-jupyter notebook wormlib_example.ipynb
+python wormlib_example.py
 ```
 
-Configure parameters in the notebook (Section 1.2):
+Configure parameters in the script (Section 1):
 
 ```python
 # Define image path and microscope parameters
-folder_name = '../data/08_dv'
+image_path = main_dir / "data/08_dv/230521_N2_08_R3D.dv"
 voxel_size = (1448, 450, 450)        # Z, Y, X in nm
 spot_radius_ch0 = (1409, 340, 340)   # PSF for Cy5 channel
 spot_radius_ch1 = (1283, 310, 310)   # PSF for mCherry channel
@@ -172,7 +172,7 @@ WormLib/
 ├── src/
 │   └── wormlib.py                # Main analysis engine
 ├── examples/
-│   ├── wormlib_example.ipynb     # Jupyter notebook example
+│   ├── wormlib_example.py        # Pipeline example script
 │   └── run-WormLib.sh            # SLURM batch script
 ├── models/                       # Trained ML classifiers
 │   ├── 2-cell_classification_RFmodel.joblib

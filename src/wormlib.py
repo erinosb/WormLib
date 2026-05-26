@@ -5,14 +5,17 @@
 
 # Standard library imports
 import os
+import sys
+import csv
 import warnings
+from datetime import datetime
 from pathlib import Path
 
 __version__ = "1.0.0"
 # Scientific computing
 import numpy as np
 import pandas as pd
-from scipy.ndimage import label, center_of_mass
+from scipy.ndimage import label, center_of_mass, binary_dilation
 
 # Image processing
 import cv2
@@ -20,6 +23,7 @@ import tifffile as tiff
 from skimage import measure, morphology, filters
 from skimage.measure import regionprops, regionprops_table
 from skimage.morphology import erosion, disk
+from skimage.draw import polygon2mask
 from skimage.util import img_as_float
 
 # Machine learning
@@ -27,6 +31,8 @@ import joblib
 
 # Visualization
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.path import Path as MPLPath
 import seaborn as sns
 
 # Specialized libraries
@@ -38,6 +44,13 @@ from cellpose import models, utils
 import nd2
 
 # Jupyter/IPython imports removed
+
+# Reporting imports
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from PIL import Image
 
 # Multiprocessing
 import multiprocessing as mp
@@ -979,6 +992,10 @@ def classify_2cell(masks_cytosol, bf, image_name, output_directory,
     # Convert to DataFrame
     features_df = pd.DataFrame(props_unseen)
 
+    if len(features_df) != 2:
+        print(f"⚠️ classify_2cell: Expected 2 cytosol masks, got {len(features_df)}. Skipping classification.")
+        return None
+
     # Rename centroids for convenience
     features_df['centroid_y'] = features_df['centroid-0']
     features_df['centroid_x'] = features_df['centroid-1']
@@ -1384,6 +1401,10 @@ def classify_4cell(masks_cytosol, bf, image_name, output_directory,
     )
     features_df = pd.DataFrame(props_unseen)
 
+    if len(features_df) != 4:
+        print(f"⚠️ classify_4cell: Expected 4 cytosol masks, got {len(features_df)}. Skipping classification.")
+        return None
+
     # --- define centroid_x / centroid_y ---
     features_df['centroid_y'] = features_df['centroid-0']
     features_df['centroid_x'] = features_df['centroid-1']
@@ -1617,7 +1638,8 @@ def keep_largest_region(mask):
     largest_region = max(props, key=lambda x: x.area)
     return (labels == largest_region.label).astype(np.uint16)
 
-def embryo_segmentation(bf, image_nuclei, image_name, output_directory):
+def embryo_segmentation(bf, image_nuclei, image_name, output_directory,
+                        embryo_diameter=500, nuclei_diameter=70):
     cytosol_image = bf[..., 0] if bf.ndim == 3 else bf
     nuclei_image = image_nuclei[..., 0] if image_nuclei.ndim == 3 else image_nuclei
 
@@ -1636,7 +1658,7 @@ def embryo_segmentation(bf, image_nuclei, image_name, output_directory):
     )
     
     # --- Post-processing: remove size outliers ---
-    labeled_nuc = label(masks_nuclei)
+    labeled_nuc, _ = label(masks_nuclei)
     props = regionprops(labeled_nuc)
     areas = np.array([p.area for p in props])
 
@@ -1659,7 +1681,7 @@ def embryo_segmentation(bf, image_nuclei, image_name, output_directory):
     outlines_nuclei = utils.outlines_list(masks_nuclei)
 
     # Compute sizes
-    labeled_cyto = label(masks_cytosol.astype(np.uint16))
+    labeled_cyto, _ = label(masks_cytosol.astype(np.uint16))
     masks_cyto_sizes = [prop.area for prop in regionprops(labeled_cyto)]
     masks_nuc_sizes = [prop.area for prop in regionprops(masks_nuclei)]
 
@@ -1708,7 +1730,9 @@ def embryo_segmentation(bf, image_nuclei, image_name, output_directory):
 # In[12]:
 
 
-def spot_detection(rna,voxel_size,spot_radius,masks_cytosol):
+def spot_detection(rna, voxel_size, spot_radius, masks_cytosol,
+                   image_name="", rna_channel="", detection_color="red",
+                   output_directory=""):
     spots, threshold = detection.detect_spots(
         images= rna,
         return_threshold=True,
@@ -1808,7 +1832,7 @@ def analyze_rna_density(image, masks_cytosol, colormap, mRNA_name, image_name, o
     """
     Analyze RNA intensity along the embryo AP axis defined by an ellipse.
     """
-    import matplotlib.patches as patches
+
     # If the image is 3D (z, y, x), perform max projection
     if image.ndim == 3:
         image_proj = np.max(image, axis=0)  # max projection along z-axis
@@ -1931,8 +1955,7 @@ def line_scan(image, masks_cytosol, colormap, mRNA_name, image_name, output_dire
     """
     Analyze RNA intensity along the body axis with cell area normalized shading.
     """
-    import matplotlib.patches as patches
-    from matplotlib.path import Path as MPLPath
+
     
     # If the image is 3D (z, y, x), perform max projection
     if image.ndim == 3:
@@ -2169,15 +2192,7 @@ def line_scan(image, masks_cytosol, colormap, mRNA_name, image_name, output_dire
 
 
 if __name__ == "__main__":
-    import sys
-    from reportlab.pdfgen import canvas
-    from reportlab.platypus import Table, TableStyle
-    from reportlab.lib import colors
-    from reportlab.lib.pagesizes import letter
-    from PIL import Image
-    import csv
-    from datetime import datetime
-    import matplotlib.patches as patches
+
 
     print("Running WormLib CLI pipeline...")
 
@@ -2303,7 +2318,9 @@ if __name__ == "__main__":
     if cell_stage == "no-nuclei" or masks_cytosol is None:
         if run_embryo_segmentation and bf is not None:
             print("\nRunning fallback whole-embryo segmentation...")
-            masks_cytosol, masks_nuclei, _, _ = embryo_segmentation(bf, image_nuclei, image_name, output_directory)
+            masks_cytosol, masks_nuclei, _, _ = embryo_segmentation(
+                bf, image_nuclei, image_name, output_directory,
+                embryo_diameter=embryo_diameter, nuclei_diameter=nuclei_diameter)
         else:
             print("Skipping segmentation.")
 
@@ -2317,13 +2334,19 @@ if __name__ == "__main__":
             print(f"Detecting {Cy5} molecules...")
             rna_channel = Cy5
             detection_color = "red"
-            spots_post_clustering_ch0, clusters_ch0, list_spots_in_each_cell_ch0, _ = spot_detection(Cy5_array, voxel_size, spot_radius_ch0, masks_cytosol)
+            spots_post_clustering_ch0, clusters_ch0, list_spots_in_each_cell_ch0, _ = spot_detection(
+                Cy5_array, voxel_size, spot_radius_ch0, masks_cytosol,
+                image_name=image_name, rna_channel=rna_channel,
+                detection_color=detection_color, output_directory=output_directory)
 
         if mCherry is not None and image_mCherry is not None and mCherry_array is not None:
             print(f"Detecting {mCherry} molecules...")
             rna_channel = mCherry
             detection_color = "blue"
-            spots_post_clustering_ch1, clusters_ch1, list_spots_in_each_cell_ch1, _ = spot_detection(mCherry_array, voxel_size, spot_radius_ch1, masks_cytosol)
+            spots_post_clustering_ch1, clusters_ch1, list_spots_in_each_cell_ch1, _ = spot_detection(
+                mCherry_array, voxel_size, spot_radius_ch1, masks_cytosol,
+                image_name=image_name, rna_channel=rna_channel,
+                detection_color=detection_color, output_directory=output_directory)
 
         # 6. Save Spot Abundance Tables (CSVs)
         sum_spots_ch0 = sum(list_spots_in_each_cell_ch0) if list_spots_in_each_cell_ch0 is not None else None
@@ -2373,8 +2396,7 @@ if __name__ == "__main__":
     if masks_cytosol is not None:
         if run_mRNA_heatmaps:
             print("\nGenerating mRNA heatmaps...")
-            from matplotlib import pyplot as plt
-            import matplotlib.patches as patches
+
             
             # Helper to create heatmaps (local inline implementation)
             def create_local_heatmap(spots, max_proj, title, channel_name):
