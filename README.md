@@ -2,7 +2,7 @@
 
 **Authors:** Erin Osborne Nishimura and contributors
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/) [![BigFISH](https://img.shields.io/badge/smFISH-BigFISH-orange.svg)](https://github.com/fish-quant/big-fish) [![Cellpose](https://img.shields.io/badge/segmentation-Cellpose-green.svg)](https://github.com/MouseLand/cellpose)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/) [![BigFISH](https://img.shields.io/badge/smFISH-BigFISH-orange.svg)](https://github.com/fish-quant/big-fish) [![Cellpose](https://img.shields.io/badge/segmentation-Cellpose-green.svg)](https://github.com/MouseLand/cellpose)
 
 ## About
 
@@ -41,43 +41,59 @@
 
 ## Installation
 
-### Quick Install
+### Quick Install With Conda
 
 ```bash
-# Create and activate conda environment
-conda create -n wormlib python=3.10 -y
-conda activate wormlib
-
 # Clone the repository
 git clone https://github.com/erinosb/WormLib.git
 cd WormLib
 
-# Install dependencies
-pip install -r requirements.txt
+# Create and activate the tested WormLib environment
+conda env create -f installation/wormlib.yml
+conda activate wormlib
 ```
 
-### GPU Support (Recommended)
+This installs the core scientific stack through conda and the remaining
+WormLib dependencies through pip. The environment file pins NumPy to `1.26.4`
+so Cellpose, PyTorch, and BigFISH do not accidentally run against NumPy 2.x.
 
-For GPU-accelerated Cellpose segmentation:
+If you already have an older or broken `wormlib` environment, remove it first:
 
 ```bash
-# NVIDIA GPU (Linux/Windows)
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
-
-# Apple Silicon (macOS) — MPS support is automatic with:
-pip install torch torchvision
+conda deactivate
+conda env remove -n wormlib
+conda env create -f installation/wormlib.yml
+conda activate wormlib
 ```
+
+### NVIDIA GPU Install
+
+For GPU-accelerated Cellpose segmentation on Linux/Windows with an NVIDIA GPU
+and CUDA 12.4-compatible drivers:
+
+```bash
+conda env create -f installation/wormlib_cuda.yml
+conda activate wormlib
+```
+
+On Apple Silicon macOS, use the default `installation/wormlib.yml`. PyTorch MPS
+support is included in the regular macOS PyTorch wheels when available.
 
 ### Verify Installation
 
-```python
-import yaml
-import bigfish
-import cellpose
-from scipy.ndimage import label
-from skimage import measure
-print("WormLib dependencies OK")
+```bash
+python -c "import numpy as np; import torch; from cellpose import models; import bigfish; print('NumPy', np.__version__); print('Torch', torch.__version__); print('WormLib dependencies OK')"
 ```
+
+Expected NumPy version:
+
+```text
+NumPy 1.26.4
+```
+
+If you see an error like `A module that was compiled using NumPy 1.x cannot be
+run in NumPy 2.x` or `_ARRAY_API not found`, the active environment is not using
+the pinned WormLib environment. Recreate it from the YAML file above.
 
 ---
 
@@ -477,6 +493,9 @@ WormLib/
 │   └── 1886_nd2/                 # Nikon ND2 samples
 ├── docs/                         # Documentation and assets
 │   └── WormLib_logo.png
+├── installation/                 # Conda environment files
+│   ├── wormlib.yml               # Default CPU/macOS environment
+│   └── wormlib_cuda.yml          # NVIDIA CUDA environment
 ├── .gitignore
 ├── requirements.txt              # Python dependencies
 └── LICENSE                       # MIT License
