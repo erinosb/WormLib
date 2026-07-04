@@ -14,22 +14,25 @@
 
 ## Features
 
+- **User input**: Describe channels, microscope parameters, and pipeline steps in a single YAML file
 - **Image I/O**: Load DeltaVision (.dv), Nikon (.nd2), and TIFF images with multi-channel extraction
-- **YAML configuration**: Describe channels, microscope parameters, and pipeline steps in a single YAML file with semantic channel roles
-- **N-channel RNA support**: Analyze any number of RNA channels — not limited to two
-- **Embryo segmentation**: Cellpose-based whole-embryo detection with size-outlier filtering
-- **Cell segmentation**: Automated nucleus-cytosol pairing with diameter optimization (≤4-cell embryos)
-- **Nuclear-only segmentation**: Automatic fallback when no brightfield/reference image is available
-- **Cell classification**: Random Forest classifiers for blastomere identity prediction
+- **N-channel support**: Analyze any number of channels
+
+- **Cell segmentation**: Custom-trained model for segmentation of 2- & 4-cell embryos. Separates each cell from another and the background using diameter optimization (only for use in images of ≤4-cell embryos)
+- **Cell classification**: Custom-trained Random Forest classifiers for blastomere identity prediction
   - **2-cell stage**: AB vs P1 with proximity fail-safe
   - **4-cell stage**: ABa, ABp, EMS, P2 with ellipse-based positional assignment
+
+- **Embryo segmentation**: Cellpose "cyto" based whole-embryo segmentation with size-outlier filtering
+- **Nuclear-only segmentation**: Automatic fallback when no brightfield/reference image is available
 - **Graceful fallback chain**: Cell segmentation → whole-embryo segmentation → nuclear-only segmentation → whole-image mask
-- **smFISH spot detection**: BigFISH pipeline with LoG filtering, automated thresholding, and dense region decomposition
+
+- **smFISH spot detection**: BigFISH based spot detection with with LoG filtering, automated thresholding, and dense region decomposition
 - **Cluster detection**: Identify transcription sites and mRNA clusters
 - **Per-cell / per-region quantification**: Spot counting per segmented cell (with classifier labels) or per segmentation region
 - **Spatial mRNA analysis**:
   - Grid-based mRNA abundance heatmaps
-  - RNA density profiles along the anterior-posterior (AP) axis
+  - RNA density profiles along the anterior-posterior axis
   - Line scan intensity analysis with ROI restriction
 - **PDF report generation**: Automated reports with figures, tables, and analysis logs
 - **HPC batch processing**: SLURM array job support for high-throughput analysis
