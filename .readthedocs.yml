@@ -18,6 +18,7 @@ python:
 sphinx:
   configuration: docs/conf.py
   failonerror: true
+  builder: html
 
 formats:
   - pdf

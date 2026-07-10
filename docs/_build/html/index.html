@@ -18,7 +18,8 @@
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,11 +41,15 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">WormLib documentation</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Configuration (YAML Settings)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputs.html">Input Formats and File Organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputs.html">Output Files and Results Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Pre-Trained Models</a></li>
 </ul>
-</div>
+
         </div>
       </div>
     </nav>
@@ -73,13 +78,67 @@
 <h1>WormLib documentation<a class="headerlink" href="#wormlib-documentation" title="Link to this heading"></a></h1>
 <p>WormLib is a modular open-source image analysis library for quantifying microscopy images of Caenorhabditis elegans embryos. It provides an end-to-end pipeline from image loading, embryo segmentation, cell identity prediction, single-molecule FISH (smFISH) spot detection, and spatial mRNA analysis.</p>
 <div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#quick-install-with-conda">Quick Install with Conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#core-dependencies">Core Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Configuration (YAML Settings)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#configuration-structure">Configuration Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#input-section">Input Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#microscope-section">Microscope Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#channels-section">Channels Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#segmentation-section">Segmentation Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#pipeline-section">Pipeline Section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#example-configs">Example Configs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#using-configuration-files">Using Configuration Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inputs.html">Input Formats and File Organization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inputs.html#supported-image-formats">Supported Image Formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs.html#deltavision-naming-convention">DeltaVision Naming Convention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs.html#file-organization-best-practice">File Organization Best Practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs.html#channel-indexing">Channel Indexing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs.html#loading-images-in-code">Loading Images in Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="outputs.html">Output Files and Results Structure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#output-directory-structure">Output Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#visualization-outputs-png">Visualization Outputs (PNG)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#quantification-outputs-csv">Quantification Outputs (CSV)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#pdf-report">PDF Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#interpreting-results">Interpreting Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#troubleshooting-output-issues">Troubleshooting Output Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="outputs.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Pre-Trained Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html#cell-classification-models-random-forest">Cell Classification Models (Random Forest)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#cellpose-segmentation-model">Cellpose Segmentation Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#using-models-in-code">Using Models in Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#disabling-classification">Disabling Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#model-limitations-and-best-practices">Model Limitations and Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#training-custom-models">Training Custom Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#citation">Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
