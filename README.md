@@ -1,11 +1,18 @@
-# WormLib <img src="docs/WormLib_logo.png" alt="WormLib Logo" width="150" align="right" />
+# WormLib <img src="docs/WormLib_logo.png" alt="WormLib Logo" width="225" align="right" />
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/) [![BigFISH](https://img.shields.io/badge/smFISH-BigFISH-orange.svg)](https://github.com/fish-quant/big-fish) [![Cellpose](https://img.shields.io/badge/segmentation-Cellpose-green.svg)](https://github.com/MouseLand/cellpose)
 
 **WormLib is a modular open-source image analysis library for quantifying microscopy images of *Caenorhabditis elegans* embryos. It provides an end-to-end pipeline from image loading, embryo segmentation, cell identity prediction, single-molecule FISH (smFISH) spot detection, and spatial mRNA analysis.**
 
-Authors: Naly Torres, Luis de Lira Aguilera, Sam Savislan Pullaro, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura
+---
+
+## Citation
+
+If you use WormLib in your research, please cite:
+> **Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura** *WormLib: A Modular Image Analysis Library for Quantifying C. elegans Microscopy.* (In preparation)
+
+
 
 ---
 
@@ -522,13 +529,6 @@ WormLib/
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
----
-
-## Citation
-
-If you use WormLib in your research, please cite:
-
-> **Nishimura EO et al.** *WormLib: A Modular Image Analysis Library for Quantifying C. elegans Microscopy.* (In preparation)
 
 ---
 
