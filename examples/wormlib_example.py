@@ -63,8 +63,8 @@ print("Current working directory:", current_dir)
 # ============================================================================
 
 # Paths
-image_path = main_dir / "data/08_dv/230521_N2_08_R3D.dv"
-image_ref = main_dir / "data/08_dv/230521_N2_08_R3D_REF.dv"
+image_path = main_dir / "data/230713_Lp306_L4440_11/230713_Lp306_L4440_11_R3D.dv"
+image_ref = main_dir / "data/230713_Lp306_L4440_11/230713_Lp306_L4440_11_R3D_REF.dv"
 output_directory = current_dir / "output_temp"
 output_directory.mkdir(parents=True, exist_ok=True)
 
