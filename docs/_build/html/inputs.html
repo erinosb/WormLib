@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="py" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Input Formats and File Organization &mdash; WormLib 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8f1ab8fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WormLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Input Formats and File Organization</a><ul>
+<li><a class="reference internal" href="#supported-image-formats">Supported Image Formats</a></li>
+<li><a class="reference internal" href="#deltavision-naming-convention">DeltaVision Naming Convention</a></li>
+<li><a class="reference internal" href="#file-organization-best-practice">File Organization Best Practice</a></li>
+<li><a class="reference internal" href="#channel-indexing">Channel Indexing</a></li>
+<li><a class="reference internal" href="#loading-images-in-code">Loading Images in Code</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WormLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Input Formats and File Organization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/inputs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="input-formats-and-file-organization">
+<h1>Input Formats and File Organization<a class="headerlink" href="#input-formats-and-file-organization" title="Link to this heading"></a></h1>
+<section id="supported-image-formats">
+<h2>Supported Image Formats<a class="headerlink" href="#supported-image-formats" title="Link to this heading"></a></h2>
+<p>WormLib supports three microscopy file formats:</p>
+<p><strong>DeltaVision (.dv)</strong>
+- Applied Precision DeltaVision microscope format
+- Multi-channel volumetric images (Z-stacks)
+- Native support for 4D data (X, Y, Z, time) and channel extraction
+- Recommended for <em>C. elegans</em> embryo imaging</p>
+<p><strong>Nikon ND2 (.nd2)</strong>
+- Nikon microscope format
+- Multi-channel support
+- Requires <code class="docutils literal notranslate"><span class="pre">nd2</span></code> package</p>
+<p><strong>TIFF (.tif, .tiff)</strong>
+- Multi-page TIFF with channel stacking
+- Must have explicit channel indexing in configuration</p>
+</section>
+<section id="deltavision-naming-convention">
+<h2>DeltaVision Naming Convention<a class="headerlink" href="#deltavision-naming-convention" title="Link to this heading"></a></h2>
+<p>DeltaVision files follow a specific naming pattern for reference vs. color images:</p>
+<p><strong>Reference image (brightfield):</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>230713_Lp306_L4440_11_R3D_REF.dv
+</pre></div>
+</div>
+<p>Contains:
+- 2D brightfield transmission image for segmentation
+- Single channel per Z-slice</p>
+<p><strong>Color image (fluorescence):</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>230713_Lp306_L4440_11_R3D.dv
+</pre></div>
+</div>
+<p>Contains:
+- 4D volumetric fluorescence data
+- 4 channels (Cy5, mCherry, FITC, DAPI) × Z-slices
+- Each channel is a separate index (0, 1, 2, 3)</p>
+<p><strong>Critical Pattern:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>_R3D_REF  → brightfield reference (2D)
+_R3D      → color/fluorescence (4D multi-channel)
+</pre></div>
+</div>
+<p>Do NOT confuse these! The <code class="docutils literal notranslate"><span class="pre">_R3D</span></code> file must not include <code class="docutils literal notranslate"><span class="pre">_REF</span></code> in the name.</p>
+<p>---</p>
+</section>
+<section id="file-organization-best-practice">
+<h2>File Organization Best Practice<a class="headerlink" href="#file-organization-best-practice" title="Link to this heading"></a></h2>
+<p>Organize your data in a clear folder structure:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>data/
+├── 230713_Lp306_L4440_11/
+│   ├── 230713_Lp306_L4440_11_R3D_REF.dv
+│   └── 230713_Lp306_L4440_11_R3D.dv
+├── 230713_Lp306_L4440_12/
+│   ├── 230713_Lp306_L4440_12_R3D_REF.dv
+│   └── 230713_Lp306_L4440_12_R3D.dv
+└── 230713_Lp306_L4440_13/
+    ├── 230713_Lp306_L4440_13_R3D_REF.dv
+    └── 230713_Lp306_L4440_13_R3D.dv
+</pre></div>
+</div>
+<p><strong>Benefits:</strong>
+- Both reference and color files in same folder
+- WormLib auto-detects and loads both
+- Easy batch processing with wildcards
+- Output can mirror input structure</p>
+<p>---</p>
+</section>
+<section id="channel-indexing">
+<h2>Channel Indexing<a class="headerlink" href="#channel-indexing" title="Link to this heading"></a></h2>
+<p><strong>For DeltaVision files:</strong></p>
+<p>Standard <em>C. elegans</em> 4-cell embryo imaging:</p>
+<ul class="simple">
+<li><p>Channel 0 — Cy5 (set3_mRNA, PSF: 1409/340/340 nm)</p></li>
+<li><p>Channel 1 — mCherry (erm1_mRNA, PSF: 1283/310/310 nm)</p></li>
+<li><p>Channel 2 — GFP (membrane/protein)</p></li>
+<li><p>Channel 3 — DAPI (nuclei)</p></li>
+</ul>
+<p>Specify these in your YAML config:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">channels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nuclei</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">          </span><span class="c1"># DAPI</span>
+<span class="w">  </span><span class="nt">rna</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set3_mRNA</span>
+<span class="w">      </span><span class="nt">fluorophore</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cy5</span>
+<span class="w">      </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">spot_radius_nm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1409</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">340</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">340</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">erm1_mRNA</span>
+<span class="w">      </span><span class="nt">fluorophore</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mCherry</span>
+<span class="w">      </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">spot_radius_nm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1283</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">310</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">310</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>---</p>
+</section>
+<section id="loading-images-in-code">
+<h2>Loading Images in Code<a class="headerlink" href="#loading-images-in-code" title="Link to this heading"></a></h2>
+<p><strong>Automatic DeltaVision detection:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">wormlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Pass path to ANY file in the folder, or the color file</span>
+<span class="n">image_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/230713_Lp306_L4440_11/230713_Lp306_L4440_11_R3D.dv&quot;</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">wormlib</span><span class="o">.</span><span class="n">load_images</span><span class="p">(</span>
+    <span class="n">image_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">image_path</span><span class="p">),</span>
+    <span class="n">output_directory</span><span class="o">=</span><span class="s2">&quot;output/&quot;</span><span class="p">,</span>
+    <span class="n">channel_names</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Cy5&#39;</span><span class="p">:</span> <span class="s1">&#39;set3_mRNA&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mCherry&#39;</span><span class="p">:</span> <span class="s1">&#39;erm1_mRNA&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;FITC&#39;</span><span class="p">:</span> <span class="s1">&#39;membrane&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;DAPI&#39;</span><span class="p">:</span> <span class="s1">&#39;DAPI&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;brightfield&#39;</span><span class="p">:</span> <span class="s1">&#39;brightfield&#39;</span>
+    <span class="p">},</span>
+    <span class="n">channel_indices</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Cy5&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;mCherry&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;FITC&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;DAPI&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s1">&#39;brightfield&#39;</span><span class="p">:</span> <span class="kc">None</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>WormLib automatically:
+1. Detects <code class="docutils literal notranslate"><span class="pre">.dv</span></code> extension
+2. Finds both <code class="docutils literal notranslate"><span class="pre">_R3D_REF</span></code> and <code class="docutils literal notranslate"><span class="pre">_R3D</span></code> files in the same folder
+3. Loads brightfield from the reference file
+4. Loads channels from the color file
+5. Returns organized image data</p>
+<p><strong>Result structure:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;image_type&#39;</span><span class="p">:</span> <span class="s1">&#39;DeltaVision&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;image_name&#39;</span><span class="p">:</span> <span class="s1">&#39;230713_Lp306_L4440_11&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bf&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>              <span class="c1"># brightfield (1024, 1024)</span>
+    <span class="s1">&#39;image_Cy5&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>       <span class="c1"># Channel 0 max projection</span>
+    <span class="s1">&#39;image_mCherry&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>   <span class="c1"># Channel 1 max projection</span>
+    <span class="s1">&#39;image_FITC&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>      <span class="c1"># Channel 2 max projection</span>
+    <span class="s1">&#39;image_nuclei&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>    <span class="c1"># Channel 3 max projection</span>
+    <span class="s1">&#39;Cy5_array&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>       <span class="c1"># Channel 0 full 3D (Z, Y, X)</span>
+    <span class="s1">&#39;mCherry_array&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>   <span class="c1"># Channel 1 full 3D</span>
+    <span class="s1">&#39;FITC_array&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>      <span class="c1"># Channel 2 full 3D</span>
+    <span class="s1">&#39;nuclei_array&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>    <span class="c1"># Channel 3 full 3D</span>
+    <span class="s1">&#39;grid_width&#39;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="s1">&#39;grid_height&#39;</span><span class="p">:</span> <span class="mi">80</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>---</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Configure your analysis in <a class="reference internal" href="settings.html"><span class="doc">Configuration (YAML Settings)</span></a></p></li>
+<li><p>Run analysis and check <a class="reference internal" href="outputs.html"><span class="doc">Output Files and Results Structure</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

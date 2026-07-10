@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="py" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration (YAML Settings) &mdash; WormLib 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8f1ab8fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WormLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Configuration (YAML Settings)</a><ul>
+<li><a class="reference internal" href="#configuration-structure">Configuration Structure</a></li>
+<li><a class="reference internal" href="#input-section">Input Section</a></li>
+<li><a class="reference internal" href="#microscope-section">Microscope Section</a></li>
+<li><a class="reference internal" href="#channels-section">Channels Section</a></li>
+<li><a class="reference internal" href="#segmentation-section">Segmentation Section</a></li>
+<li><a class="reference internal" href="#pipeline-section">Pipeline Section</a></li>
+<li><a class="reference internal" href="#example-configs">Example Configs</a></li>
+<li><a class="reference internal" href="#using-configuration-files">Using Configuration Files</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WormLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Configuration (YAML Settings)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/settings.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration-yaml-settings">
+<h1>Configuration (YAML Settings)<a class="headerlink" href="#configuration-yaml-settings" title="Link to this heading"></a></h1>
+<p>WormLib uses YAML configuration files to define analysis pipelines. A single config file specifies input/output paths, microscope parameters, channel definitions, and which pipeline steps to run.</p>
+<p>---</p>
+<section id="configuration-structure">
+<h2>Configuration Structure<a class="headerlink" href="#configuration-structure" title="Link to this heading"></a></h2>
+<p><strong>Minimal Example:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./data/my_images/</span>
+<span class="w">  </span><span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./output/</span>
+
+<span class="nt">microscope</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">voxel_size_nm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1448</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">450</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">450</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Z, Y, X in nanometers</span>
+
+<span class="nt">channels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nuclei</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DAPI</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cell_segmentation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">spot_detection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p><strong>Full Example:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">input</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../data/my_data_folder</span>
+<span class="w">  </span><span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">../../output_temp/results</span>
+
+<span class="nt">microscope</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">voxel_size_nm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1448</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">450</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">450</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Z, Y, X</span>
+
+<span class="nt">channels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nuclei</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DAPI</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">brightfield</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">brightfield</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ref_file</span><span class="w">          </span><span class="c1"># Load from _R3D_REF file</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">  </span><span class="nt">rna</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mRNA1</span>
+<span class="w">      </span><span class="nt">fluorophore</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cy5</span>
+<span class="w">      </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">spot_radius_nm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1409</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">340</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">340</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">detection_color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">red</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mRNA2</span>
+<span class="w">      </span><span class="nt">fluorophore</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mCherry</span>
+<span class="w">      </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">spot_radius_nm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1283</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">310</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">310</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">detection_color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blue</span>
+
+<span class="nt">segmentation</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">embryo_diameter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500</span>
+<span class="w">  </span><span class="nt">nuclei_diameter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">70</span>
+
+<span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cell_segmentation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">cell_classification</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">embryo_segmentation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">spot_detection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">heatmaps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">rna_density</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">line_scan</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p>---</p>
+</section>
+<section id="input-section">
+<h2>Input Section<a class="headerlink" href="#input-section" title="Link to this heading"></a></h2>
+<p><strong>path</strong> — Directory containing microscopy files (.dv, .nd2, .tiff)</p>
+<p><strong>output_directory</strong> — Where analysis results will be saved</p>
+</section>
+<section id="microscope-section">
+<h2>Microscope Section<a class="headerlink" href="#microscope-section" title="Link to this heading"></a></h2>
+<p><strong>voxel_size_nm</strong> — <code class="docutils literal notranslate"><span class="pre">[Z,</span> <span class="pre">Y,</span> <span class="pre">X]</span></code> voxel dimensions in nanometers</p>
+<p>For <em>C. elegans</em> 4-cell embryos on DeltaVision: <code class="docutils literal notranslate"><span class="pre">[1448,</span> <span class="pre">450,</span> <span class="pre">450]</span></code></p>
+</section>
+<section id="channels-section">
+<h2>Channels Section<a class="headerlink" href="#channels-section" title="Link to this heading"></a></h2>
+<p>Define how to extract channels from your images.</p>
+<p><strong>nuclei</strong> — Nuclear stain (required for cell segmentation)</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> — Display name (e.g., &quot;DAPI&quot;)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code> — Channel index in the image file (0, 1, 2, 3, ...)</p></li>
+</ul>
+<p><strong>brightfield</strong> — Optional brightfield/transmission image</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> — Display name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source</span></code> — <code class="docutils literal notranslate"><span class="pre">&quot;ref_file&quot;</span></code> to load from DeltaVision reference file (_R3D_REF)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code> — Set to <code class="docutils literal notranslate"><span class="pre">null</span></code> for brightfield</p></li>
+</ul>
+<p><strong>rna</strong> — One or more mRNA channels to detect</p>
+<p>For each RNA channel:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> — Gene name (e.g., &quot;set3_mRNA&quot;)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fluorophore</span></code> — Dye label (e.g., &quot;Cy5&quot;, &quot;mCherry&quot;)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code> — Channel index</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spot_radius_nm</span></code> — <code class="docutils literal notranslate"><span class="pre">[Z,</span> <span class="pre">Y,</span> <span class="pre">X]</span></code> PSF (Point Spread Function) in nm</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">detection_color</span></code> — Visualization color for detection plots (&quot;red&quot;, &quot;blue&quot;, etc.)</p></li>
+</ul>
+</section>
+<section id="segmentation-section">
+<h2>Segmentation Section<a class="headerlink" href="#segmentation-section" title="Link to this heading"></a></h2>
+<p><strong>embryo_diameter</strong> — Expected embryo diameter in pixels (for whole-embryo segmentation)</p>
+<p><strong>nuclei_diameter</strong> — Expected nucleus diameter in pixels (for nuclear segmentation)</p>
+<p>These values help Cellpose optimize segmentation. Typical values:</p>
+<ul class="simple">
+<li><p>Embryo diameter: 375–500 pixels</p></li>
+<li><p>Nuclei diameter: 30–70 pixels</p></li>
+</ul>
+</section>
+<section id="pipeline-section">
+<h2>Pipeline Section<a class="headerlink" href="#pipeline-section" title="Link to this heading"></a></h2>
+<p>Control which analysis steps run (true/false):</p>
+<ul class="simple">
+<li><p><strong>cell_segmentation</strong> — Segment individual cells</p></li>
+<li><p><strong>cell_classification</strong> — Predict cell identity (AB, ABa, EMS, etc.)</p></li>
+<li><p><strong>embryo_segmentation</strong> — Segment whole embryo</p></li>
+<li><p><strong>spot_detection</strong> — Detect individual mRNA spots</p></li>
+<li><p><strong>heatmaps</strong> — Generate grid-based abundance heatmaps</p></li>
+<li><p><strong>rna_density</strong> — Analyze RNA density along embryo axis</p></li>
+<li><p><strong>line_scan</strong> — Generate line scan intensity plots</p></li>
+</ul>
+<p>Disable steps to save computation time if not needed.</p>
+</section>
+<section id="example-configs">
+<h2>Example Configs<a class="headerlink" href="#example-configs" title="Link to this heading"></a></h2>
+<p>WormLib includes example configurations in <code class="docutils literal notranslate"><span class="pre">config/examples/</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">one_rna_full.yml</span></code> — Single channel with all steps enabled</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">two_rna_full.yml</span></code> — Two RNA channels with cell classification</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rna_only_spot_detection.yml</span></code> — Only spot detection, skip segmentation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dapi_one_rna_no_brightfield.yml</span></code> — Nuclear and mRNA, no brightfield</p></li>
+</ul>
+</section>
+<section id="using-configuration-files">
+<h2>Using Configuration Files<a class="headerlink" href="#using-configuration-files" title="Link to this heading"></a></h2>
+<p><strong>Via Jupyter notebook:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/examples/two_rna_full.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Access settings</span>
+<span class="n">voxel_size</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;microscope&#39;</span><span class="p">][</span><span class="s1">&#39;voxel_size_nm&#39;</span><span class="p">]</span>
+<span class="n">output_dir</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="s1">&#39;output_directory&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Via command line (future):</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>src/wormlib.py<span class="w"> </span>--config<span class="w"> </span>config/examples/two_rna_full.yml
+</pre></div>
+</div>
+<p>---</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="inputs.html"><span class="doc">Input Formats and File Organization</span></a> to understand supported image formats</p></li>
+<li><p>See <a class="reference internal" href="outputs.html"><span class="doc">Output Files and Results Structure</span></a> to understand generated result files</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

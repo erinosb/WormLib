@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="py" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-Trained Models &mdash; WormLib 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8f1ab8fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WormLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Pre-Trained Models</a><ul>
+<li><a class="reference internal" href="#cell-classification-models-random-forest">Cell Classification Models (Random Forest)</a></li>
+<li><a class="reference internal" href="#cellpose-segmentation-model">Cellpose Segmentation Model</a></li>
+<li><a class="reference internal" href="#using-models-in-code">Using Models in Code</a></li>
+<li><a class="reference internal" href="#disabling-classification">Disabling Classification</a></li>
+<li><a class="reference internal" href="#model-limitations-and-best-practices">Model Limitations and Best Practices</a></li>
+<li><a class="reference internal" href="#training-custom-models">Training Custom Models</a></li>
+<li><a class="reference internal" href="#citation">Citation</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WormLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Pre-Trained Models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pre-trained-models">
+<h1>Pre-Trained Models<a class="headerlink" href="#pre-trained-models" title="Link to this heading"></a></h1>
+<p>WormLib includes pre-trained machine learning models for cell segmentation and classification. These models are optimized for <em>C. elegans</em> embryo imaging and are located in the <code class="docutils literal notranslate"><span class="pre">models/</span></code> directory.</p>
+<p>---</p>
+<section id="cell-classification-models-random-forest">
+<h2>Cell Classification Models (Random Forest)<a class="headerlink" href="#cell-classification-models-random-forest" title="Link to this heading"></a></h2>
+<p>Used to predict cell identity (blastomere name) based on morphological features.</p>
+<p><strong>2-Cell Stage: ``2-cell_classification_RFmodel.joblib``</strong></p>
+<p>Classifies cells into:</p>
+<ul class="simple">
+<li><p><strong>AB</strong> — Anterior blastomere</p></li>
+<li><p><strong>P1</strong> — Posterior blastomere</p></li>
+</ul>
+<p>Features used:</p>
+<ul class="simple">
+<li><p>Cell position (centroid X, Y)</p></li>
+<li><p>Cell area</p></li>
+<li><p>Eccentricity (elongation)</p></li>
+<li><p>Proximity to predicted embryo center</p></li>
+</ul>
+<p><strong>Accuracy:</strong> ~95% on test data</p>
+<p><strong>When to use:</strong> Set <code class="docutils literal notranslate"><span class="pre">pipeline.cell_classification:</span> <span class="pre">true</span></code> for 2-cell stage embryos</p>
+<p><strong>4-Cell Stage: ``4-cell_classification_RFmodel.joblib``</strong></p>
+<p>Classifies cells into:</p>
+<ul class="simple">
+<li><p><strong>ABa</strong> — Anterior-left blastomere</p></li>
+<li><p><strong>ABp</strong> — Anterior-right blastomere</p></li>
+<li><p><strong>EMS</strong> — Endoderm/mesoderm precursor</p></li>
+<li><p><strong>P2</strong> — Posterior blastomere</p></li>
+</ul>
+<p>Features used:</p>
+<ul class="simple">
+<li><p>Cell position (X, Y relative to embryo center)</p></li>
+<li><p>Cell area</p></li>
+<li><p>Eccentricity</p></li>
+<li><p>Ellipse-based spatial assignment</p></li>
+</ul>
+<p><strong>Accuracy:</strong> ~92% on test data</p>
+<p><strong>When to use:</strong> Set <code class="docutils literal notranslate"><span class="pre">pipeline.cell_classification:</span> <span class="pre">true</span></code> for 4-cell stage embryos</p>
+<p><strong>Output:</strong></p>
+<p>Classification results are saved in:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Classification_Report_{image_name}.csv</span></code> — Full feature set + prediction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">per_cell_mRNA_counts_{image_name}.csv</span></code> — Label and confidence per cell</p></li>
+</ul>
+<p>Example output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cell_ID,label,prediction_confidence
+1,AB,0.987
+2,P1,0.954
+3,ABa,0.923
+4,ABp,0.891
+</pre></div>
+</div>
+</section>
+<section id="cellpose-segmentation-model">
+<h2>Cellpose Segmentation Model<a class="headerlink" href="#cellpose-segmentation-model" title="Link to this heading"></a></h2>
+<p><strong>Pre-trained model: ``ce-embryo/``</strong></p>
+<p>Custom Cellpose model trained on <em>C. elegans</em> embryo brightfield images.</p>
+<p><strong>What it does:</strong></p>
+<ul class="simple">
+<li><p>Segments individual cells from brightfield microscopy</p></li>
+<li><p>Uses diameter optimization (default: 250 pixels)</p></li>
+<li><p>Outputs mask labels (one integer per cell)</p></li>
+<li><p>Separates cells from background and each other</p></li>
+</ul>
+<p><strong>Architecture:</strong> Cellpose &quot;cyto&quot; model fine-tuned for embryo images</p>
+<p><strong>Input:</strong> Brightfield image (2D or max projection)</p>
+<p><strong>Output:</strong> Segmentation mask (same shape as input, integer labels per cell)</p>
+<p><strong>When to use:</strong></p>
+<p>Enable in config:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cell_segmentation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p><strong>Performance:</strong></p>
+<ul class="simple">
+<li><p>Typical accuracy: ~90% for 2-cell and 4-cell stages</p></li>
+<li><p>Works best for embryos with clear cell boundaries</p></li>
+<li><p>Fails if cells are heavily overlapped or out-of-focus</p></li>
+</ul>
+<p>---</p>
+</section>
+<section id="using-models-in-code">
+<h2>Using Models in Code<a class="headerlink" href="#using-models-in-code" title="Link to this heading"></a></h2>
+<p><strong>Cell Segmentation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">wormlib</span>
+
+<span class="c1"># Segmentation happens automatically when enabled</span>
+<span class="n">masks_cytosol</span><span class="p">,</span> <span class="n">masks_nuclei</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">wormlib</span><span class="o">.</span><span class="n">segmentation</span><span class="p">(</span>
+    <span class="n">image_cytosol</span><span class="o">=</span><span class="n">brightfield_image</span><span class="p">,</span>
+    <span class="n">image_nuclei</span><span class="o">=</span><span class="n">dapi_image</span><span class="p">,</span>
+    <span class="n">second_image_cytosol</span><span class="o">=</span><span class="n">dapi_image</span><span class="p">,</span>
+    <span class="n">output_directory</span><span class="o">=</span><span class="s1">&#39;output/&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Cell Classification:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">wormlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">models_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">)</span>
+<span class="n">model_2cell</span> <span class="o">=</span> <span class="n">models_dir</span> <span class="o">/</span> <span class="s1">&#39;2-cell_classification_RFmodel.joblib&#39;</span>
+
+<span class="n">features_df</span> <span class="o">=</span> <span class="n">wormlib</span><span class="o">.</span><span class="n">classify_2cell</span><span class="p">(</span>
+    <span class="n">masks_cytosol</span><span class="o">=</span><span class="n">segmentation_mask</span><span class="p">,</span>
+    <span class="n">bf</span><span class="o">=</span><span class="n">brightfield_image</span><span class="p">,</span>
+    <span class="n">image_name</span><span class="o">=</span><span class="s1">&#39;sample_image&#39;</span><span class="p">,</span>
+    <span class="n">output_directory</span><span class="o">=</span><span class="s1">&#39;output/&#39;</span><span class="p">,</span>
+    <span class="n">model_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">model_2cell</span><span class="p">),</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="c1"># Returns DataFrame with cell IDs, labels, and confidence scores</span>
+</pre></div>
+</div>
+<p>---</p>
+</section>
+<section id="disabling-classification">
+<h2>Disabling Classification<a class="headerlink" href="#disabling-classification" title="Link to this heading"></a></h2>
+<p>To skip cell classification (e.g., for embryos at stages not covered by models):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cell_classification</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<p>This will:</p>
+<ul class="simple">
+<li><p>Skip the classifier step</p></li>
+<li><p>Still perform segmentation</p></li>
+<li><p>Per-cell CSV will have no <code class="docutils literal notranslate"><span class="pre">label</span></code> or <code class="docutils literal notranslate"><span class="pre">confidence</span></code> columns</p></li>
+<li><p>Use generic <code class="docutils literal notranslate"><span class="pre">region_id</span></code> instead of cell names</p></li>
+</ul>
+<p>---</p>
+</section>
+<section id="model-limitations-and-best-practices">
+<h2>Model Limitations and Best Practices<a class="headerlink" href="#model-limitations-and-best-practices" title="Link to this heading"></a></h2>
+<p><strong>Known limitations:</strong></p>
+<ul class="simple">
+<li><p>2-cell and 4-cell models only (not trained for other stages)</p></li>
+<li><p>Assumes brightfield is of reasonable quality (in-focus, proper exposure)</p></li>
+<li><p>May fail on abnormal embryo morphology</p></li>
+<li><p>Classifier confidence varies by embryo quality</p></li>
+</ul>
+<p><strong>Best practices:</strong></p>
+<ol class="arabic">
+<li><p><strong>Always inspect segmentation masks</strong> before trusting results</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masks_cytosol</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Segmentation Mask&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Check classifier confidence</strong> in output CSVs</p>
+<ul class="simple">
+<li><p>Confidence &gt; 0.9 is reliable</p></li>
+<li><p>0.7–0.9 suggests ambiguous cells (review manually)</p></li>
+<li><p>&lt; 0.7 is unreliable (consider disabling classifier)</p></li>
+</ul>
+</li>
+<li><p><strong>Validate on a few images first</strong> before batch processing</p></li>
+<li><p><strong>If results are poor</strong>, consider:</p>
+<ul class="simple">
+<li><p>Re-optimizing cell_diameter in config</p></li>
+<li><p>Checking image quality (brightness, contrast, focus)</p></li>
+<li><p>Manually validating a subset of results</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="training-custom-models">
+<h2>Training Custom Models<a class="headerlink" href="#training-custom-models" title="Link to this heading"></a></h2>
+<p>To train your own classifiers:</p>
+<ol class="arabic simple">
+<li><p>Collect labeled training images (segmentation masks + cell identities)</p></li>
+<li><p>Extract morphological features using WormLib utilities</p></li>
+<li><p>Train Random Forest in scikit-learn</p></li>
+<li><p>Save model with joblib</p></li>
+<li><p>Reference in your analysis</p></li>
+</ol>
+<p>Full training protocol and example code coming in future documentation.</p>
+<p>---</p>
+</section>
+<section id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Link to this heading"></a></h2>
+<p>If you use WormLib models in your research, please cite:</p>
+<p><strong>Torres, N., et al.</strong> (in preparation). WormLib: Automated image analysis for <em>C. elegans</em> embryos.</p>
+<p>Pre-trained Cellpose model based on:</p>
+<p><strong>Stringer, C., et al.</strong> (2021). Cellpose: a generalist algorithm for cellular segmentation. <em>Nature Methods</em> 18, 100–106.</p>
+<p>---</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="settings.html"><span class="doc">Configuration (YAML Settings)</span></a> to enable/disable models in your config</p></li>
+<li><p>See <a class="reference internal" href="outputs.html"><span class="doc">Output Files and Results Structure</span></a> to interpret classification results</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="py" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Output Files and Results Structure &mdash; WormLib 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8f1ab8fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WormLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Output Files and Results Structure</a><ul>
+<li><a class="reference internal" href="#output-directory-structure">Output Directory Structure</a></li>
+<li><a class="reference internal" href="#visualization-outputs-png">Visualization Outputs (PNG)</a></li>
+<li><a class="reference internal" href="#quantification-outputs-csv">Quantification Outputs (CSV)</a></li>
+<li><a class="reference internal" href="#pdf-report">PDF Report</a></li>
+<li><a class="reference internal" href="#interpreting-results">Interpreting Results</a></li>
+<li><a class="reference internal" href="#troubleshooting-output-issues">Troubleshooting Output Issues</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WormLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Output Files and Results Structure</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/outputs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="output-files-and-results-structure">
+<h1>Output Files and Results Structure<a class="headerlink" href="#output-files-and-results-structure" title="Link to this heading"></a></h1>
+<p>WormLib generates organized output organized by image name. Each analysis produces visualization PNGs, quantification CSVs, and a compiled PDF report.</p>
+<p>---</p>
+<section id="output-directory-structure">
+<h2>Output Directory Structure<a class="headerlink" href="#output-directory-structure" title="Link to this heading"></a></h2>
+<p>After running analysis on <code class="docutils literal notranslate"><span class="pre">230713_Lp306_L4440_11</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>output/230713_Lp306_L4440_11/
+├── Segmentation_Masks/
+│   ├── cytosol_mask.png
+│   ├── nuclei_mask.png
+│   └── nuclei_outlines.png
+├── Spot_Detection/
+│   ├── set3_mRNA_detection_230713_Lp306_L4440_11.png
+│   └── erm1_mRNA_detection_230713_Lp306_L4440_11.png
+├── Heatmaps/
+│   ├── set3_mRNA_heatmap_230713_Lp306_L4440_11.png
+│   └── erm1_mRNA_heatmap_230713_Lp306_L4440_11.png
+├── Line_Scans/
+│   ├── set3_mRNA_line_scan_230713_Lp306_L4440_11.png
+│   └── erm1_mRNA_line_scan_230713_Lp306_L4440_11.png
+├── per_cell_mRNA_counts_230713_Lp306_L4440_11.csv
+├── total_mRNA_counts_230713_Lp306_L4440_11.csv
+├── Classification_Report_230713_Lp306_L4440_11.csv
+└── 230713_Lp306_L4440_11_report.pdf
+</pre></div>
+</div>
+</section>
+<section id="visualization-outputs-png">
+<h2>Visualization Outputs (PNG)<a class="headerlink" href="#visualization-outputs-png" title="Link to this heading"></a></h2>
+<p><strong>Segmentation Masks</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cytosol_mask.png</span></code> — Individual cell outlines (one per segmented cell)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nuclei_mask.png</span></code> — Nucleus boundaries</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nuclei_outlines.png</span></code> — Nuclear outlines overlaid on brightfield</p></li>
+</ul>
+<p>Used to verify segmentation quality before analysis.</p>
+<p><strong>Spot Detection</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{channel_name}_detection_{image_name}.png</span></code> — Red/blue points marking detected spots</p></li>
+</ul>
+<p>Shows spot locations in max projection view. One file per RNA channel.</p>
+<p><strong>Heatmaps</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{channel_name}_heatmap_{image_name}.png</span></code> — Side-by-side figure</p></li>
+</ul>
+<p>Left panel: Max projection image with spot density overlay
+Right panel: 80×80 grid heatmap showing spot abundance per cell</p>
+<p>Quantifies spatial distribution of mRNA across the embryo.</p>
+<p><strong>Line Scans</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{channel_name}_line_scan_{image_name}.png</span></code> — 1D intensity profile along embryo axis</p></li>
+</ul>
+<p>Shows RNA intensity variation along anterior-posterior axis with embryo cell labels (if classifier enabled).</p>
+</section>
+<section id="quantification-outputs-csv">
+<h2>Quantification Outputs (CSV)<a class="headerlink" href="#quantification-outputs-csv" title="Link to this heading"></a></h2>
+<p><strong>Wide Format: ``total_mRNA_counts_{image_name}.csv``</strong></p>
+<p>Summary counts per image:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Image ID,set3_mRNA total molecules,erm1_mRNA total molecules
+230713_Lp306_L4440_11,547,302
+</pre></div>
+</div>
+<p>Useful for quick statistics across many images.</p>
+<p><strong>Long Format: ``per_cell_mRNA_counts_{image_name}.csv``</strong></p>
+<p>Per-cell spot counts:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Image ID,region_id,set3_mRNA,erm1_mRNA,label,confidence
+230713_Lp306_L4440_11,1,125,89,AB,0.987
+230713_Lp306_L4440_11,2,98,72,P1,0.954
+230713_Lp306_L4440_11,3,156,104,ABa,0.923
+230713_Lp306_L4440_11,4,168,37,EMS,0.891
+</pre></div>
+</div>
+<p>Columns:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Image</span> <span class="pre">ID</span></code> — Image filename</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">region_id</span></code> — Cell number (1, 2, 3, ...)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{channel_name}</span></code> — Spot count per channel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code> — Predicted cell identity (if classifier enabled)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">confidence</span></code> — Prediction confidence (0.0–1.0)</p></li>
+</ul>
+<p>Use this for statistical analysis, correlation tests, etc.</p>
+<p><strong>Classification Report: ``Classification_Report_{image_name}.csv``</strong></p>
+<p>Cell identity predictions with feature values:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cell_ID,label,prediction_confidence,centroid_x,centroid_y,area,eccentricity
+1,AB,0.987,512.5,256.3,18500,0.45
+2,P1,0.954,520.1,389.2,22100,0.52
+...
+</pre></div>
+</div>
+<p>Features used by the Random Forest classifier:
+- Centroid position (X, Y)
+- Cell area (pixels²)
+- Eccentricity (elongation)
+- Other morphological features</p>
+</section>
+<section id="pdf-report">
+<h2>PDF Report<a class="headerlink" href="#pdf-report" title="Link to this heading"></a></h2>
+<p><strong>``{image_name}_report.pdf``</strong></p>
+<p>Compiled analysis report containing:</p>
+<ul class="simple">
+<li><p>Segmentation visualization (masks overlay)</p></li>
+<li><p>Spot detection for each channel</p></li>
+<li><p>Heatmaps (left: image, right: grid)</p></li>
+<li><p>Line scan plots</p></li>
+<li><p>Summary statistics (total spots, per-cell distributions)</p></li>
+<li><p>Classification results table (if enabled)</p></li>
+<li><p>Processing parameters (voxel size, PSF, segmentation settings)</p></li>
+</ul>
+<p>Automatically generated at the end of analysis. Suitable for sharing with collaborators.</p>
+<p>---</p>
+</section>
+<section id="interpreting-results">
+<h2>Interpreting Results<a class="headerlink" href="#interpreting-results" title="Link to this heading"></a></h2>
+<p><strong>High-quality segmentation</strong></p>
+<ul class="simple">
+<li><p>Clear cell boundaries in segmentation mask</p></li>
+<li><p>No merged cells or fragments</p></li>
+<li><p>Expected count: 2-cell or 4-cell embryos only</p></li>
+</ul>
+<p><strong>Robust spot detection</strong></p>
+<ul class="simple">
+<li><p>Red/blue dots in spot detection PNG match obvious fluorescent puncta</p></li>
+<li><p>Not too noisy (false positives from background)</p></li>
+<li><p>Not too conservative (missing real signal)</p></li>
+<li><p>Adjust <code class="docutils literal notranslate"><span class="pre">spot_radius_nm</span></code> in config if results look off</p></li>
+</ul>
+<p><strong>Meaningful heatmaps</strong></p>
+<ul class="simple">
+<li><p>Grid heatmap shows clear spatial patterns (not uniform)</p></li>
+<li><p>High-abundance regions correspond to visible spots in image</p></li>
+<li><p>Compare between channels to identify differential localization</p></li>
+</ul>
+<p><strong>Cell classification accuracy</strong></p>
+<ul class="simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">confidence</span></code> column in per_cell CSV</p></li>
+<li><p>Confidence &gt; 0.9 is generally reliable</p></li>
+<li><p>Lower confidence suggests ambiguous cell identity or segmentation artifact</p></li>
+</ul>
+<p>---</p>
+</section>
+<section id="troubleshooting-output-issues">
+<h2>Troubleshooting Output Issues<a class="headerlink" href="#troubleshooting-output-issues" title="Link to this heading"></a></h2>
+<p><strong>No output files generated</strong></p>
+<ul class="simple">
+<li><p>Check pipeline flags in config (e.g., <code class="docutils literal notranslate"><span class="pre">spot_detection:</span> <span class="pre">true</span></code>)</p></li>
+<li><p>Verify output_directory exists and is writable</p></li>
+<li><p>Check console output for error messages</p></li>
+</ul>
+<p><strong>Blank or noisy visualizations</strong></p>
+<ul class="simple">
+<li><p>Verify channel_indices are correct</p></li>
+<li><p>Check image data (plot in Jupyter to inspect)</p></li>
+<li><p>Confirm PSF values are appropriate for your microscope</p></li>
+</ul>
+<p><strong>CSV files missing</strong></p>
+<ul class="simple">
+<li><p>Spot detection must run before quantification CSVs are generated</p></li>
+<li><p>Classifier must be enabled for <code class="docutils literal notranslate"><span class="pre">label</span></code> and <code class="docutils literal notranslate"><span class="pre">confidence</span></code> columns</p></li>
+<li><p>Review pipeline flags</p></li>
+</ul>
+<p>---</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>See <a class="reference internal" href="models.html"><span class="doc">Pre-Trained Models</span></a> to understand pre-trained classifiers</p></li>
+<li><p>See <a class="reference internal" href="settings.html"><span class="doc">Configuration (YAML Settings)</span></a> to configure your analysis</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

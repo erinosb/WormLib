@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="py" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; WormLib 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8f1ab8fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            WormLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#quick-install-with-conda">Quick Install with Conda</a></li>
+<li><a class="reference internal" href="#core-dependencies">Core Dependencies</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WormLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<section id="quick-install-with-conda">
+<h2>Quick Install with Conda<a class="headerlink" href="#quick-install-with-conda" title="Link to this heading"></a></h2>
+<p>WormLib requires Python 3.11+ and uses conda for dependency management. Follow these steps to get started:</p>
+<p><strong>1. Clone the repository:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/erinosb/WormLib.git
+<span class="nb">cd</span><span class="w"> </span>WormLib
+</pre></div>
+</div>
+<p><strong>2. Create the conda environment:</strong></p>
+<p>For CPU-based installation (recommended for most users):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>installation/wormlib.yml
+conda<span class="w"> </span>activate<span class="w"> </span>wormlib
+</pre></div>
+</div>
+<p>For GPU acceleration (CUDA 11.8):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>installation/wormlib_cuda.yml
+conda<span class="w"> </span>activate<span class="w"> </span>wormlib
+</pre></div>
+</div>
+<p><strong>3. Verify installation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">wormlib</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WormLib version: </span><span class="si">{</span><span class="n">wormlib</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the import succeeds, you're ready to go!</p>
+<p>---</p>
+</section>
+<section id="core-dependencies">
+<h2>Core Dependencies<a class="headerlink" href="#core-dependencies" title="Link to this heading"></a></h2>
+<p>WormLib relies on several key scientific Python packages:</p>
+<ul class="simple">
+<li><p><strong>big-fish</strong> — Single-molecule FISH spot detection with LoG filtering and automated thresholding</p></li>
+<li><p><strong>cellpose</strong> — Deep learning-based cell and embryo segmentation</p></li>
+<li><p><strong>nd2</strong> — Nikon microscopy file format support</p></li>
+<li><p><strong>scikit-image</strong> — Image processing utilities</p></li>
+<li><p><strong>opencv-python-headless</strong> — Image manipulation without GUI</p></li>
+<li><p><strong>reportlab</strong> — PDF report generation</p></li>
+<li><p><strong>PyYAML</strong> — Configuration file parsing</p></li>
+</ul>
+<p>Full dependency list is maintained in <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and environment files.</p>
+<p>---</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<p><strong>Environment creation fails</strong></p>
+<p>If conda environment creation fails:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clear conda cache</span>
+conda<span class="w"> </span>clean<span class="w"> </span>--all
+
+<span class="c1"># Try creating environment again</span>
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>installation/wormlib.yml<span class="w"> </span>--force-reinstall
+</pre></div>
+</div>
+<p><strong>Import errors after activation</strong></p>
+<p>Make sure you've activated the correct environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>wormlib
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import wormlib; print(wormlib.__version__)&quot;</span>
+</pre></div>
+</div>
+<p><strong>GPU support not working</strong></p>
+<p>If CUDA installation fails or torch doesn't detect your GPU:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify CUDA availability</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import torch; print(torch.cuda.is_available())&quot;</span>
+
+<span class="c1"># If False, use CPU version instead</span>
+conda<span class="w"> </span>deactivate
+conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>-n<span class="w"> </span>wormlib
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>installation/wormlib.yml
+</pre></div>
+</div>
+<p><strong>Missing data or models</strong></p>
+<p>The repository includes pre-trained classifiers in the <code class="docutils literal notranslate"><span class="pre">models/</span></code> directory. If files are missing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify model files exist</span>
+ls<span class="w"> </span>models/
+<span class="c1"># Expected output:</span>
+<span class="c1"># 2-cell_classification_RFmodel.joblib</span>
+<span class="c1"># 4-cell_classification_RFmodel.joblib</span>
+<span class="c1"># ce-embryo/</span>
+</pre></div>
+</div>
+<p>---</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<p>Once installed, explore the example notebook:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples
+jupyter<span class="w"> </span>notebook<span class="w"> </span><span class="s2">&quot;1 - Single-cell spot detection.ipynb&quot;</span>
+</pre></div>
+</div>
+<p>Or refer to <a class="reference internal" href="settings.html"><span class="doc">Configuration (YAML Settings)</span></a> to learn how to configure analysis pipelines with YAML.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
