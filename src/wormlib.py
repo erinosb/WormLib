@@ -286,12 +286,12 @@ def _organize_dv_files(dv_files):
         return []
     
     # Separate by naming pattern
-    ref_files = [f for f in dv_files if '_R3D_REF' in f]
-    color_files = [f for f in dv_files if '_R3D' in f and '_R3D_REF' not in f]
-    other_files = [f for f in dv_files if f not in ref_files and f not in color_files]
+    image_ref = [f for f in dv_files if '_R3D_REF' in f]
+    image_color = [f for f in dv_files if '_R3D' in f and '_R3D_REF' not in f]
+    other_files = [f for f in dv_files if f not in image_ref and f not in image_color]
     
     # Return ordered list: reference first, then colors, then others
-    return ref_files + color_files + other_files
+    return image_ref + image_color + other_files
 
 
 def load_images(image_path, output_directory, channel_names, slice_to_plot=0, channel_indices=None):
@@ -340,13 +340,13 @@ def load_images(image_path, output_directory, channel_names, slice_to_plot=0, ch
         image_type = 'dv'
         # For DeltaVision, intelligently order files (ref first, then colors)
         dv_files = _organize_dv_files(dv_files)
-        print("Detected DeltaVision (.dv) images")
+        print("Detected file type: DeltaVision (.dv)")
     elif nd2_files:
         image_type = 'nd2'
-        print("Detected Nikon (.nd2) images")
+        print("Detected file type: Nikon (.nd2)")
     elif tiff_files:
         image_type = 'tiff'
-        print("Detected TIFF (.tif/.tiff) images")
+        print("Detected file type: TIFF (.tif/.tiff)")
     else:
         print("No supported image format found (.dv, .nd2, .tif, .tiff)")
         return None
