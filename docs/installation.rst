@@ -1,10 +1,10 @@
 Installation
 =============
 
-Quick Install with Conda
+Option #1: Quick Install with Conda
 ------------------------
 
-WormLib requires Python 3.11+ and uses conda for dependency management. Follow these steps to get started:
+Follow these steps to install WormLib using conda. This method is recommended for most users as it handles dependencies automatically.
 
 **1. Clone the repository:**
 
@@ -43,15 +43,20 @@ If the import succeeds, you're ready to go!
 Core Dependencies
 ------------------
 
-WormLib relies on several key scientific Python packages:
-
-- **big-fish** — Single-molecule FISH spot detection with LoG filtering and automated thresholding
-- **cellpose** — Deep learning-based cell and embryo segmentation
-- **nd2** — Nikon microscopy file format support
-- **scikit-image** — Image processing utilities
-- **opencv-python-headless** — Image manipulation without GUI
-- **reportlab** — PDF report generation
-- **PyYAML** — Configuration file parsing
+| Package | Version | Purpose |
+|---------|---------|---------|
+| [BigFISH](https://github.com/fish-quant/big-fish) | 0.6.2 | smFISH spot detection & analysis with LoG filtering and automated thresholding|
+| [Cellpose](https://github.com/MouseLand/cellpose) | 3.1.0 | Deep learning-based cell and embryo segmentation |
+| [scikit-image](https://scikit-image.org/) | 0.23.2 | Image processing & morphology |
+| [scikit-learn](https://scikit-learn.org/) | Conda-managed | Random Forest classifiers (transitive via joblib) |
+| [PyTorch](https://pytorch.org/) | 2.4.1 | GPU backend for Cellpose |
+| [OpenCV](https://opencv.org/) | 4.10.0.84 | Image manipulation without GUI, Contour & ellipse fitting |
+| [nd2](https://github.com/tlambert03/nd2) | 0.10.3 | Nikon ND2 file reader |
+| [tifffile](https://github.com/cgohlke/tifffile) | 2025.6.11 | TIFF file I/O |
+| [PyYAML](https://pyyaml.org/) | ≥ 6.0.1 | YAML configuration parsing |
+| [ReportLab](https://www.reportlab.com/) | ≥ 4.0.8 | PDF report generation |
+| [Pillow](https://python-pillow.org/) | ≥ 10.0 | Image handling for PDF reports |
+| [Python](https://www.python.org/) | 3.11+ | Core programming language |
 
 Full dependency list is maintained in ``requirements.txt`` and environment files.
 
@@ -83,7 +88,7 @@ Make sure you've activated the correct environment:
 
 **GPU support not working**
 
-If CUDA installation fails or torch doesn't detect your GPU:
+If CUDA installation fails or torch doesn't detect your GPU, use CPU I installation instead.
 
 .. code-block:: bash
 
@@ -96,8 +101,8 @@ If CUDA installation fails or torch doesn't detect your GPU:
     conda env create -f installation/wormlib.yml
 
 **Missing data or models**
-
-The repository includes pre-trained classifiers in the ``models/`` directory. If files are missing:
+There are currently no example datasets included in the repository. Please download your own dv, nd2 or tiff files for analysis.
+The repository includes pre-trained classifiers in the ``models/`` directory. Verify if files are missing:
 
 .. code-block:: bash
 
