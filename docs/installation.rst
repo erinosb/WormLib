@@ -1,7 +1,7 @@
 Installation
 =============
 
-Option #1: Quick Install with Conda
+Quick Install with Conda
 ------------------------
 
 Follow these steps to install WormLib using conda. This method is recommended for most users as it handles dependencies automatically.
