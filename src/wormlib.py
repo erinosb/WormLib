@@ -2576,7 +2576,7 @@ if __name__ == "__main__":
                         cell_y = int(y / cell_h)
                         if 0 <= cell_x < grid_width and 0 <= cell_y < grid_height:
                             grid[cell_y, cell_x] += 1
-                
+
                 fig, axs = plt.subplots(1, 2, figsize=(8, 4))
                 axs[0].imshow(max_proj, cmap='gray')
                 axs[0].set_title(f"{channel_name} Max Projection")
