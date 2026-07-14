@@ -5,7 +5,7 @@
 
 **WormLib is a modular open-source image analysis library for quantifying microscopy images of *Caenorhabditis elegans* embryos. It provides an end-to-end pipeline from image loading, embryo and cell segmentation, cell identity prediction, spot detection, and spatial mRNA analysis.**
 ---
-You can learn more about Wormlib by reading the paper [here](https://example.com/paper) and in the detailed documentation at [READTHEDOCS.io](https://wormlib.readthedocs.io). Please see install instructions [below](https://github.com/TorresNaly/WormLib/blob/main/README.md#installation).
+You can learn more about Wormlib by reading the paper [here](https://example.com/paper) and in the detailed documentation at [READTHEDOCS.io](https://wormlib.readthedocs.io/en/latest/). Please see install instructions [below](https://github.com/TorresNaly/WormLib/blob/main/README.md#installation).
 
 
 ### Example notebooks:
