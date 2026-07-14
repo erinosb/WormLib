@@ -1903,6 +1903,7 @@ def line_scan(image, masks_cytosol, colormap, mRNA_name, image_name, output_dire
             plt.legend()
             plt.axis('equal')
             plt.savefig(ellipse_plot_path, bbox_inches='tight', dpi=300)
+            plt.show()
             plt.close()
 
             # Dynamically set AP axis positions using rel_pos_minor (flip so AB = 0 μm)
