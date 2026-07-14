@@ -1961,54 +1961,55 @@ def line_scan(image, masks_cytosol, colormap, mRNA_name, image_name, output_dire
                 output_directory, f'{mRNA_name}_line_scan_{image_name}.png'
             )
             plt.savefig(scatter_plot_path, bbox_inches='tight', dpi=300)
-            plt.close()
+            plt.show()
+            # plt.close()
 
-            #  -------- Line scan with cell area normalized shaded -------- #
-            if run_cell_classifier and features_df is not None and df_long is not None:
-                fig, ax = plt.subplots()
+            # #  -------- Line scan with cell area normalized shaded -------- #
+            # if run_cell_classifier and features_df is not None and df_long is not None:
+            #     fig, ax = plt.subplots()
 
-                # Draw shaded regions for each cell
-                for start, end, label in ap_positions:
-                    color = 'C0' if label == 'AB' or label == 'ABa' else 'C1'
-                    ax.axvspan(start, end, color=color, alpha=0.2)
+            #     # Draw shaded regions for each cell
+            #     for start, end, label in ap_positions:
+            #         color = 'C0' if label == 'AB' or label == 'ABa' else 'C1'
+            #         ax.axvspan(start, end, color=color, alpha=0.2)
                     
-                # Annotate each cell with label
-                for _, row in df_long.iterrows():
-                    label = row['label']
-                    start, end = None, None
+            #     # Annotate each cell with label
+            #     for _, row in df_long.iterrows():
+            #         label = row['label']
+            #         start, end = None, None
 
-                    # Find start/end from AP-axis positions
-                    for s, e, l in ap_positions:
-                        if l == label:
-                            start, end = s, e
-                            break
+            #         # Find start/end from AP-axis positions
+            #         for s, e, l in ap_positions:
+            #             if l == label:
+            #                 start, end = s, e
+            #                 break
 
-                    if start is not None and end is not None:
-                        mid = (start + end) / 2
-                        # Cell label on top
-                        ax.text(mid, 0.9, f"{label}", ha='center', va='bottom', fontsize=20, fontweight='bold',
-                                color='k', transform=ax.get_xaxis_transform())
+            #         if start is not None and end is not None:
+            #             mid = (start + end) / 2
+            #             # Cell label on top
+            #             ax.text(mid, 0.9, f"{label}", ha='center', va='bottom', fontsize=20, fontweight='bold',
+            #                     color='k', transform=ax.get_xaxis_transform())
 
-                # Scatter + line plot
-                for i in range(len(positions)):
-                    ax.scatter(positions[i], normalized_intensity[i], color=colormap_values[i], s=50,
-                               label=f'Grid {i}' if i == 0 else "")
+            #     # Scatter + line plot
+            #     for i in range(len(positions)):
+            #         ax.scatter(positions[i], normalized_intensity[i], color=colormap_values[i], s=50,
+            #                    label=f'Grid {i}' if i == 0 else "")
 
-                ax.plot(positions, normalized_intensity, color='gray', linestyle='-', linewidth=1)
-                ax.set_xlabel('Position along Body Axis (% distance)')
-                ax.set_ylabel('Normalized Mean Pixel Intensity')
-                ax.set_title(f'{mRNA_name} Normalized Intensity Along Body Axis')
+            #     ax.plot(positions, normalized_intensity, color='gray', linestyle='-', linewidth=1)
+            #     ax.set_xlabel('Position along Body Axis (% distance)')
+            #     ax.set_ylabel('Normalized Mean Pixel Intensity')
+            #     ax.set_title(f'{mRNA_name} Normalized Intensity Along Body Axis')
 
-                # Add minor ticks for precise % counting
-                ax.set_xticks(np.arange(0, 101, 10))   # major ticks every 10%
-                ax.set_xticks(np.arange(0, 101, 1), minor=True)  # minor ticks every 1%
-                ax.tick_params(axis='x', which='minor', length=5, color='k')  # minor tick length
-                ax.tick_params(axis='x', which='major', length=10, color='k')  # major tick length
+            #     # Add minor ticks for precise % counting
+            #     ax.set_xticks(np.arange(0, 101, 10))   # major ticks every 10%
+            #     ax.set_xticks(np.arange(0, 101, 1), minor=True)  # minor ticks every 1%
+            #     ax.tick_params(axis='x', which='minor', length=5, color='k')  # minor tick length
+            #     ax.tick_params(axis='x', which='major', length=10, color='k')  # major tick length
 
-                plt.tight_layout()
-                scatter_plot_path = os.path.join(output_directory, f'{mRNA_name}_line_scan_shaded_{image_name}.png')
-                plt.savefig(scatter_plot_path, bbox_inches='tight', dpi=300)
-                plt.close()
+            #     plt.tight_layout()
+            #     scatter_plot_path = os.path.join(output_directory, f'{mRNA_name}_line_scan_shaded_{image_name}.png')
+            #     plt.savefig(scatter_plot_path, bbox_inches='tight', dpi=300)
+            #     plt.close()
 
             # Save the raw density data to a CSV using both names
             density_data = pd.DataFrame({
@@ -2102,7 +2103,7 @@ def save_spot_quantification(spot_counts_dict, image_name, output_directory,
     return df_quantification, None
 
 
-def create_local_heatmap(spots, max_proj, channel_name, masks_cytosol, grid_width, grid_height, 
+def heatmap(spots, max_proj, channel_name, masks_cytosol, grid_width, grid_height, 
                          image_name, output_directory, vmin=0, vmax=None, normalize_scale=False):
     """
     Create a grid-based heatmap visualization of RNA spots.
@@ -2183,6 +2184,149 @@ def create_local_heatmap(spots, max_proj, channel_name, masks_cytosol, grid_widt
     plt.savefig(heatmap_path, dpi=300, bbox_inches='tight')
     plt.show()
     print(f"Saved: {heatmap_path}")
+
+# Backwards compatibility: keep old name pointing to new function
+create_local_heatmap = heatmap
+
+
+def generate_pdf_report(image_name, output_directory):
+    """
+    Generate a PDF report from PNG/CSV outputs in a pipeline output directory.
+
+    Parameters:
+    -----------
+    image_name : str
+        Image identifier shown in the report header.
+    output_directory : str or Path
+        Directory containing analysis outputs (PNG and CSV files).
+
+    Returns:
+    --------
+    str
+        Path to the generated PDF report.
+    """
+    output_directory = str(output_directory)
+    output_pdf_path = os.path.join(output_directory, "report.pdf")
+
+    # Collect images and CSVs sorted by creation time
+    output_file_paths = []
+    for filename in os.listdir(output_directory):
+        if filename.lower().endswith((".png", ".csv")):
+            output_file_paths.append(os.path.join(output_directory, filename))
+    sorted_files = sorted(output_file_paths, key=lambda f: os.path.getctime(f))
+
+    c = canvas.Canvas(output_pdf_path, pagesize=letter)
+    c.setFont("Times-Roman", 16)
+    c.drawString(32, 728, f"{image_name}")
+    c.setFont("Times-Roman", 14)
+    c.drawString(32, 713, f"Report Generated: {datetime.now().date()}")
+
+    def draw_csv_table(file_path, canv, margin, current_y, padding):
+        with open(file_path, newline="") as csvFile:
+            reader = csv.reader(csvFile)
+            data = list(reader)
+        
+        # Format values to 3 decimal places for floating points
+        formatted_data = []
+        for row in data:
+            formatted_row = []
+            for val in row:
+                try:
+                    formatted_row.append(f"{float(val):.3f}")
+                except ValueError:
+                    formatted_row.append(val)
+            formatted_data.append(formatted_row)
+
+        table = Table(formatted_data)
+        table.setStyle(TableStyle([
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Times-Roman"),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.black)
+        ]))
+        tableWidth, tableHeight = table.wrapOn(canv, 400, 600)
+        current_y -= tableHeight + padding
+        table.drawOn(canv, margin, current_y)
+        return current_y
+
+    def get_image_size(file_path):
+        with Image.open(file_path) as img:
+            w, h = img.size
+            aspect = w / h
+        width = 145.6 * aspect
+        if width > 548:
+            height = 548 / aspect
+            width = 548
+        else:
+            height = 145.6
+        return height, width
+
+    def draw_page_number(canv):
+        canv.setFont("Times-Roman", 10)
+        canv.drawRightString(580, 32, f"{canv.getPageNumber()}")
+
+    current_y = 700
+    padding = 20
+    
+    for file_path in sorted_files:
+        if file_path.endswith(".png"):
+            h, w = get_image_size(file_path)
+            title = os.path.basename(file_path)
+            if current_y >= h + padding + 15:
+                c.setFont("Times-Roman", 12)
+                c.drawString(32, current_y - 15, title)
+                c.drawImage(file_path, 32, current_y - h - padding, w, h)
+                current_y -= h + padding + 10
+            else:
+                c.showPage()
+                c.setFont("Times-Roman", 16)
+                c.drawString(32, 728, f"{image_name}")
+                current_y = 710
+                c.setFont("Times-Roman", 12)
+                c.drawString(32, current_y, title)
+                c.drawImage(file_path, 32, current_y - h - padding, w, h)
+                current_y -= h + padding + 20
+                draw_page_number(c)
+        elif file_path.endswith(".csv"):
+            c.setFont("Times-Roman", 12)
+            c.drawString(32, current_y - 15, os.path.basename(file_path))
+            current_y -= 15
+            current_y = draw_csv_table(file_path, c, 32, current_y, padding)
+
+    # Dynamically find the .out file (log) and write to report
+    out_file = None
+    for item in os.listdir(output_directory):
+        if item.lower().endswith(".out"):
+            out_file = os.path.join(output_directory, item)
+            break
+
+    if out_file and os.path.isfile(out_file):
+        with open(out_file, 'r') as f:
+            lines = f.readlines()
+
+        req_space = len(lines) * 12 + 40
+        if current_y < req_space:
+            c.showPage()
+            current_y = 720
+            c.setFont("Times-Roman", 16)
+            c.drawString(32, 728, f"{image_name}")
+
+        c.setFont("Times-Roman", 12)
+        c.drawString(32, current_y, os.path.basename(out_file))
+        current_y -= 16
+
+        text_data = c.beginText(32, current_y)
+        text_data.setFont("Times-Roman", 10)
+        for line in lines:
+            text_data.textLine(line.strip())
+        c.drawText(text_data)
+
+    c.save()
+    print("PDF report successfully generated.")
+    return output_pdf_path
 
 
 if __name__ == "__main__":
@@ -2418,7 +2562,7 @@ if __name__ == "__main__":
 
             
             # Helper to create heatmaps (local inline implementation)
-            def create_local_heatmap(spots, max_proj, title, channel_name):
+            def heatmap(spots, max_proj, title, channel_name):
                 img_width, img_height = masks_cytosol.shape[1], masks_cytosol.shape[0]
                 cell_w = img_width / grid_width
                 cell_h = img_height / grid_height
@@ -2449,7 +2593,7 @@ if __name__ == "__main__":
 
             for rna in rna_channels:
                 if rna.get("image") is not None:
-                    create_local_heatmap(rna.get("spots"), rna["image"], f"{rna['name']} Heatmap", rna["name"])
+                    heatmap(rna.get("spots"), rna["image"], f"{rna['name']} Heatmap", rna["name"])
 
         if run_rna_density_analysis:
             print("\nGenerating RNA density profiles along AP axis...")
@@ -2468,125 +2612,5 @@ if __name__ == "__main__":
 
     # 8. Export PDF Report
     print("\nExporting final PDF data report...")
-    output_pdf_path = os.path.join(output_directory, "report.pdf")
-
-    # Collect images and CSVs sorted by creation time
-    output_file_paths = []
-    for filename in os.listdir(output_directory):
-        if filename.lower().endswith((".png", ".csv")):
-            output_file_paths.append(os.path.join(output_directory, filename))
-    sorted_files = sorted(output_file_paths, key=lambda f: os.path.getctime(f))
-
-    c = canvas.Canvas(output_pdf_path, pagesize=letter)
-    c.setFont("Times-Roman", 16)
-    c.drawString(32, 728, f"{image_name}")
-    c.setFont("Times-Roman", 14)
-    c.drawString(32, 713, f"Report Generated: {datetime.now().date()}")
-
-    # Draw table function from CSV
-    def draw_csv_table(file_path, canv, margin, current_y, padding):
-        with open(file_path, newline="") as csvFile:
-            reader = csv.reader(csvFile)
-            data = list(reader)
-        
-        # Format values to 3 decimal places for floating points
-        formatted_data = []
-        for row in data:
-            formatted_row = []
-            for val in row:
-                try:
-                    formatted_row.append(f"{float(val):.3f}")
-                except ValueError:
-                    formatted_row.append(val)
-            formatted_data.append(formatted_row)
-
-        table = Table(formatted_data)
-        table.setStyle(TableStyle([
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("FONTNAME", (0, 0), (-1, 0), "Times-Roman"),
-            ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
-            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
-            ("GRID", (0, 0), (-1, -1), 0.5, colors.black)
-        ]))
-        tableWidth, tableHeight = table.wrapOn(canv, 400, 600)
-        current_y -= tableHeight + padding
-        table.drawOn(canv, margin, current_y)
-        return current_y
-
-    def get_image_size(file_path):
-        with Image.open(file_path) as img:
-            w, h = img.size
-            aspect = w / h
-        width = 145.6 * aspect
-        if width > 548:
-            height = 548 / aspect
-            width = 548
-        else:
-            height = 145.6
-        return height, width
-
-    def draw_page_number(canv):
-        canv.setFont("Times-Roman", 10)
-        canv.drawRightString(580, 32, f"{canv.getPageNumber()}")
-
-    current_y = 700
-    padding = 20
-    
-    for file_path in sorted_files:
-        if file_path.endswith(".png"):
-            h, w = get_image_size(file_path)
-            title = os.path.basename(file_path)
-            if current_y >= h + padding + 15:
-                c.setFont("Times-Roman", 12)
-                c.drawString(32, current_y - 15, title)
-                c.drawImage(file_path, 32, current_y - h - padding, w, h)
-                current_y -= h + padding + 10
-            else:
-                c.showPage()
-                c.setFont("Times-Roman", 16)
-                c.drawString(32, 728, f"{image_name}")
-                current_y = 710
-                c.setFont("Times-Roman", 12)
-                c.drawString(32, current_y, title)
-                c.drawImage(file_path, 32, current_y - h - padding, w, h)
-                current_y -= h + padding + 20
-                draw_page_number(c)
-        elif file_path.endswith(".csv"):
-            c.setFont("Times-Roman", 12)
-            c.drawString(32, current_y - 15, os.path.basename(file_path))
-            current_y -= 15
-            current_y = draw_csv_table(file_path, c, 32, current_y, padding)
-
-    # Dynamically find the .out file (log) and write to report
-    out_file = None
-    for item in os.listdir(output_directory):
-        if item.lower().endswith(".out"):
-            out_file = os.path.join(output_directory, item)
-            break
-
-    if out_file and os.path.isfile(out_file):
-        with open(out_file, 'r') as f:
-            lines = f.readlines()
-
-        req_space = len(lines) * 12 + 40
-        if current_y < req_space:
-            c.showPage()
-            current_y = 720
-            c.setFont("Times-Roman", 16)
-            c.drawString(32, 728, f"{image_name}")
-
-        c.setFont("Times-Roman", 12)
-        c.drawString(32, current_y, os.path.basename(out_file))
-        current_y -= 16
-
-        text_data = c.beginText(32, current_y)
-        text_data.setFont("Times-Roman", 10)
-        for line in lines:
-            text_data.textLine(line.strip())
-        c.drawText(text_data)
-
-    c.save()
-    print("PDF report successfully generated.")
+    generate_pdf_report(image_name, str(output_directory))
     print("Pipeline run completed successfully.")
