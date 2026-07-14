@@ -3,7 +3,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/) [![BigFISH](https://img.shields.io/badge/smFISH-BigFISH-orange.svg)](https://github.com/fish-quant/big-fish) [![Cellpose](https://img.shields.io/badge/segmentation-Cellpose-green.svg)](https://github.com/MouseLand/cellpose)
 
-**WormLib is a modular open-source image analysis library for quantifying microscopy images of *Caenorhabditis elegans* embryos. It provides an end-to-end pipeline from image loading, embryo segmentation, cell identity prediction, single-molecule FISH (smFISH) spot detection, and spatial mRNA analysis.**
+**WormLib is a modular open-source image analysis library for quantifying microscopy images of *Caenorhabditis elegans* embryos. It provides an end-to-end pipeline from image loading, embryo and cell segmentation, cell identity prediction, spot detection, and spatial mRNA analysis.**
+---
+You can learn more about Wormlib by reading the paper [here](https://example.com/paper) and in the detailed documentation at [READTHEDOCS.io](https://wormlib.readthedocs.io). Please see install instructions below.
+
+## Example notebooks:
+[1 - Single-cell spot detection](https://github.com/TorresNaly/WormLib/blob/main/examples/1%20-%20Single-cell%20spot%20detection.ipynb)
 
 ---
 
@@ -12,34 +17,6 @@
 If you use WormLib in your research, please cite:
 > **Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura** *WormLib: A Modular Image Analysis Library for Quantifying C. elegans Microscopy.* (In preparation)
 
-
-
----
-
-## Features
-
-- **User input**: Describe any number of channels, microscope parameters, and pipeline steps in a single YAML file
-- **Supported image file**: DeltaVision (.dv), Nikon (.nd2), and TIFF images with multi-channel extraction
-
-- **Cell segmentation and Classification of C. elegans embryos**: Custom-trained Cellpose models for segmentation of 2- & 4-cell embryos separates each cell from another and the background using diameter optimization (only for use in images of ≤4-cell embryos). Followed by custom-trained Random Forest classifiers for blastomere identity prediction
-  - **2-cell stage**: AB vs P1 with proximity fail-safe
-  - **4-cell stage**: ABa, ABp, EMS, P2 with ellipse-based positional assignment
-
-- **Embryo segmentation**: Cellpose "cyto" based whole-embryo segmentation with size-outlier filtering
-
-
-- **smFISH spot detection**: BigFISH based spot detection with with LoG filtering, automated thresholding, and dense region decomposition
-- **Per-cell / per-region quantification**: Spot counting per segmented cell (with classifier labels) or per segmentation region
-
-
-- **Spatial mRNA analysis**:
-  - Grid-based mRNA abundance heatmaps
-  - RNA density profiles along the anterior-posterior axis
-  - Cluster detection: Identify transcription sites and mRNA clusters
-  - Line scan intensity analysis with ROI restriction
-- **PDF report generation**: Automated reports with figures, tables, and analysis logs
-- **HPC batch processing**: SLURM array job support for high-throughput analysis
-- **CLI with argparse**: `python src/wormlib.py --config config.yml [input] [output]`
 
 ---
 
