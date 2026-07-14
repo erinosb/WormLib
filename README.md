@@ -7,24 +7,21 @@
 ---
 You can learn more about Wormlib by reading the paper [here](https://example.com/paper) and in the detailed documentation at [READTHEDOCS.io](https://wormlib.readthedocs.io). Please see install instructions below.
 
----
 
-## Example notebooks:
+### Example notebooks:
 [1 - Single-cell spot detection](https://github.com/TorresNaly/WormLib/blob/main/examples/1%20-%20Single-cell%20spot%20detection.ipynb)
 
----
 
-## Citation
+### Citation
 
 If you use WormLib in your research, please cite:
 > **Naly Torres, Luis de Lira Aguilera, Karissa Coleman, Richard Bruno, Brian Munsky, Erin Osborne Nishimura** *WormLib: A Modular Image Analysis Library for Quantifying C. elegans Microscopy.* (In preparation)
-
 
 ---
 
 ## Installation
 
-### Quick Install With Conda
+### Option #1: Quick Install With Conda
 
 ```bash
 # Clone the repository
@@ -37,19 +34,27 @@ conda activate wormlib
 ```
 
 This installs the core scientific stack through conda and the remaining
-WormLib dependencies through pip. The environment file pins NumPy to `1.26.4`
-so Cellpose, PyTorch, and BigFISH do not accidentally run against NumPy 2.x.
+WormLib dependencies through pip. 
 
-If you already have an older or broken `wormlib` environment, remove it first:
+#### Dependencies
 
-```bash
-conda deactivate
-conda env remove -n wormlib
-conda env create -f installation/wormlib.yml
-conda activate wormlib
-```
+| Package | Version | Purpose |
+|---------|---------|---------|
+| [BigFISH](https://github.com/fish-quant/big-fish) | 0.6.2 | smFISH spot detection & analysis |
+| [Cellpose](https://github.com/MouseLand/cellpose) | 3.1.0 | Deep learning cell segmentation |
+| [scikit-image](https://scikit-image.org/) | 0.23.2 | Image processing & morphology |
+| [scikit-learn](https://scikit-learn.org/) | Conda-managed | Random Forest classifiers (transitive via joblib) |
+| [PyTorch](https://pytorch.org/) | 2.4.1 | GPU backend for Cellpose |
+| [OpenCV](https://opencv.org/) | 4.10.0.84 | Contour & ellipse fitting |
+| [nd2](https://github.com/tlambert03/nd2) | 0.10.3 | Nikon ND2 file reader |
+| [tifffile](https://github.com/cgohlke/tifffile) | 2025.6.11 | TIFF file I/O |
+| [PyYAML](https://pyyaml.org/) | ≥ 6.0.1 | YAML configuration parsing |
+| [ReportLab](https://www.reportlab.com/) | ≥ 4.0.8 | PDF report generation |
+| [Pillow](https://python-pillow.org/) | ≥ 10.0 | Image handling for PDF reports |
 
-### NVIDIA GPU Install
+
+
+### Option #2: NVIDIA GPU Install
 
 For GPU-accelerated Cellpose segmentation on Linux/Windows with an NVIDIA GPU
 and CUDA 12.4-compatible drivers:
@@ -65,37 +70,23 @@ support is included in the regular macOS PyTorch wheels when available.
 ### Verify Installation
 
 ```bash
-python -c "import numpy as np; import torch; from cellpose import models; import bigfish; print('NumPy', np.__version__); print('Torch', torch.__version__); print('WormLib dependencies OK')"
+python -c "import numpy as np; import torch; from cellpose import models; import bigfish; print('WormLib dependencies OK')"
 ```
 
-Expected NumPy version:
-
-```text
-NumPy 1.26.4
-```
-
-If you see an error like `A module that was compiled using NumPy 1.x cannot be
-run in NumPy 2.x` or `_ARRAY_API not found`, the active environment is not using
-the pinned WormLib environment. Recreate it from the YAML file above.
+If you see an error indicating that a module compiled with NumPy `< 2.0` cannot
+run with NumPy `≥ 2.0`, or `_ARRAY_API not found`, the active environment is not
+using the pinned WormLib environment. Recreate it from the YAML file above.
 
 ---
 
+If you already have an older or broken `wormlib` environment, remove it first:
 
-## Dependencies
-
-| Package | Purpose |
-|---------|---------|
-| [BigFISH](https://github.com/fish-quant/big-fish) | smFISH spot detection & analysis |
-| [Cellpose](https://github.com/MouseLand/cellpose) | Deep learning cell segmentation |
-| [scikit-image](https://scikit-image.org/) | Image processing & morphology |
-| [scikit-learn](https://scikit-learn.org/) | Random Forest classifiers (transitive via joblib) |
-| [PyTorch](https://pytorch.org/) | GPU backend for Cellpose |
-| [OpenCV](https://opencv.org/) | Contour & ellipse fitting |
-| [nd2](https://github.com/tlambert03/nd2) | Nikon ND2 file reader |
-| [tifffile](https://github.com/cgohlke/tifffile) | TIFF file I/O |
-| [PyYAML](https://pyyaml.org/) | YAML configuration parsing |
-| [ReportLab](https://www.reportlab.com/) | PDF report generation |
-| [Pillow](https://python-pillow.org/) | Image handling for PDF reports |
+```bash
+conda deactivate
+conda env remove -n wormlib
+conda env create -f installation/wormlib.yml
+conda activate wormlib
+```
 
 ---
 
