@@ -1,9 +1,7 @@
-Output Files and Results Structure
+Outputs
 ===================================
 
-WormLib generates organized output organized by image name. Each analysis produces visualization PNGs, quantification CSVs, and binary segmentation masks. Outputs are saved flat (no subdirectories) in the image-specific output directory.
 
----
 Image Data Dictionary
 ----------------------------
 
@@ -64,70 +62,54 @@ All output is automatically saved in the image subdirectory after single cell sp
 
 .. list-table::
    :header-rows: 1
-   :widths: 25 30 15 40
+   :widths: 30 15 40
 
-   * - Example Name
-     - Generic Pattern
+   * - Generic Pattern
      - Type
      - Description
-   * - ``channels_230713_Lp306_L4440_11.png``
-     - ``channels_{image_name}.png``
+   * - ``channels_{image_name}.png``
      - PNG
      - Raw channel images displayed side-by-side for visual inspection
-   * - ``set3_mRNA_detection_230713_Lp306_L4440_11.png``
-     - ``{channel_name}_detection_{image_name}.png``
+   * - ``{channel_name}_detection_{image_name}.png``
      - PNG
      - Detected mRNA spots marked as red/blue points on max projection. One file per RNA channel.
-   * - ``set3_mRNA_threshold_230713_Lp306_L4440_11.png``
-     - ``{channel_name}_threshold_{image_name}.png``
+   * - ``{channel_name}_threshold_{image_name}.png``
      - PNG
      - Visualization of threshold applied during spot detection. One file per RNA channel.
-   * - ``set3_mRNA_heatmap_230713_Lp306_L4440_11.png``
-     - ``{channel_name}_heatmap_{image_name}.png``
+   * - ``{channel_name}_heatmap_{image_name}.png``
      - PNG
      - Side-by-side heatmap figure: (left) max projection with spot density overlay; (right) 80×80 grid showing spot abundance per region. One file per RNA channel.
-   * - ``set3_mRNA_line_scan_230713_Lp306_L4440_11.png``
-     - ``{channel_name}_line_scan_{image_name}.png``
+   * - ``{channel_name}_line_scan_{image_name}.png``
      - PNG
      - 1D intensity profile along embryo anterior-posterior axis. One file per RNA channel.
-   * - ``set3_mRNA_line_ROI_230713_Lp306_L4440_11.png``
-     - ``{channel_name}_line_ROI_{image_name}.png``
+   * - ``{channel_name}_line_ROI_{image_name}.png``
      - PNG
      - Visual representation of the line scan region of interest on the embryo. One file per RNA channel.
    * - ``masks_cytosol.tif``
-     - ``masks_cytosol.tif``
      - TIF
      - Binary segmentation mask of all detected cells/regions (multi-channel format)
-   * - ``centroid_position_plot_230713_Lp306_L4440_11.png``
-     - ``centroid_position_plot_{image_name}.png``
+   * - ``centroid_position_plot_{image_name}.png``
      - PNG
      - Visualization of cell/region centroids overlaid on embryo image
-   * - ``cell_confidence_plot_230713_Lp306_L4440_11.png``
-     - ``cell_confidence_plot_{image_name}.png``
+   * - ``cell_confidence_plot_{image_name}.png``
      - PNG
      - Plot showing classification confidence scores for each predicted cell identity
-   * - ``predicted_label_230713_Lp306_L4440_11.png``
-     - ``predicted_label_{image_name}.png``
+   * - ``predicted_label_{image_name}.png``
      - PNG
      - Overlay of predicted cell identity labels on segmented embryo image
-   * - ``total_mRNA_counts_230713_Lp306_L4440_11.csv``
-     - ``total_mRNA_counts_{image_name}.csv``
+   * - ``total_mRNA_counts_{image_name}.csv``
      - CSV
      - Wide format summary: total mRNA spot counts per channel for the entire image (useful for bulk statistics)
-   * - ``per_region_mRNA_counts_230713_Lp306_L4440_11.csv``
-     - ``per_region_mRNA_counts_{image_name}.csv``
+   * - ``per_region_mRNA_counts_{image_name}.csv``
      - CSV
      - Long format: spot counts per region, including region_id, channel counts, predicted label, and confidence scores (for statistical analysis and per-cell quantification)
-   * - ``features_df_230713_Lp306_L4440_11.csv``
-     - ``features_df_{image_name}.csv``
+   * - ``features_df_{image_name}.csv``
      - CSV
      - Classification features used by Random Forest: centroid position (X, Y), cell area, eccentricity, and other morphological properties
-   * - ``set3_mRNA_line_density_data_230713_Lp306_L4440_11.csv``
-     - ``{channel_name}_line_density_data_{image_name}.csv``
+   * - ``{channel_name}_line_density_data_{image_name}.csv``
      - CSV
      - Quantitative spot density values sampled along the line ROI. One file per RNA channel.
-   * - ``set3_mRNA_line_scan_data_230713_Lp306_L4440_11.csv``
-     - ``{channel_name}_line_scan_data_{image_name}.csv``
+   * - ``{channel_name}_line_scan_data_{image_name}.csv``
      - CSV
      - Raw intensity values sampled along the line scan profile. One file per RNA channel.
 
@@ -172,6 +154,7 @@ Interpreting Results
 ---------------------
 
 **Robust spot detection**
+
 - Threshold PNG shows thresholding applied. Verify here if appropriate.
 - Not too noisy (false positives from background)
 - Not too conservative (missing real signal)
@@ -181,11 +164,13 @@ spot_radius_ch0 = (1409, 340, 340)  # PSF for channel 0 (Cy5)
 spot_radius_ch1 = (1283, 310, 310)  # PSF for channel 1 (mCherry)
 
 **Meaningful heatmaps**
+
 - Grid heatmap shows clear spatial patterns (not uniform)
 - High-abundance regions correspond to visible spots in image
 - Compare between channels to identify differential localization
 
 **Cell classification accuracy**
+
 - We encourage all users to inspect the ``predicted_label`` overlay and ``cell_confidence_plot`` to verify that cell identities are assigned correctly. 
 - - Check ``confidence`` column in per_region CSV. Confidence > 0.9 is generally reliable.
 - Lower confidence suggests ambiguous cell identity or segmentation artifact
@@ -193,6 +178,7 @@ spot_radius_ch1 = (1283, 310, 310)  # PSF for channel 1 (mCherry)
 - Classification accuracy is directly impacted by the quality of segmentation.
 
 **Segmentation quality**
+
 - Check ``masks_cytosol.tif`` to verify cell boundaries
 - Inspect ``centroid_position_plot`` to confirm region centroids
 - If segmentation is poor, consider adjusting ``segmentation_threshold`` or ``min_region_size`` in your input configuration.
