@@ -4,40 +4,60 @@ Input
 Supported Image Formats
 ------------------------
 
-WormLib supports three microscopy file formats:
+File formats supported by WormLib:
 
-**DeltaVision (.dv), Nikon ND2 (.nd2), and TIFF (.tif, .tiff)**
-- Multi-channel volumetric images (Z-stacks)
-- Native support for 4D data (X, Y, Z, time) and channel extraction
+**DeltaVision (.dv)**
+**Nikon ND2 (.nd2)**
+**TIFF (.tif, .tiff)**
 
 
 
-## DeltaVision files follow a specific naming pattern for reference vs. color images:
-
+DeltaVision files
+------------------------
 **Critical Pattern:**
 
 .. code-block:: text
 
+
+  **Reference image (brightfield):**
     _R3D_REF  → brightfield reference (2D)
-    _R3D      → color/fluorescence (4D multi-channel)
+  Contains:
+- Single channel 2D brightfield
+- used for embryo segmentation and cell identity prediction
 
+  **Color image (fluorescence):**
+   _R3D      → color/fluorescence (4D multi-channel)
+  Contains:
+- 4D (C,Z,Y,X) (C = channel, Z = z-slice, Y = height, X = width)
+- usually query channel: used for smFISH spot detection and spatial mRNA analysis
 
-**Reference image (brightfield):**
+Do NOT confuse these! The ``_R3D`` file must NOT include ``_D3D`` in the name and must be a different file from ``_R3D_REF``. 
 
-Contains:
-- 2D brightfield transmission image for segmentation
-- Single channel per Z-slice
-
-**Color image (fluorescence):**
-
-Contains:
-- 4D (C,Z,Y,X) 
-- 4 channels (Cy5, mCherry, FITC, DAPI) × Z-slices
-- Each channel is a separate index (0, 1, 2, 3)
-
-Do NOT confuse these! The ``_R3D`` file must not include ``_D3D`` in the name and must be a different file from ``_REF``. 
+WormLib automatically detects ``.dv`` extension and finds both ``_R3D_REF`` and ``_R3D`` files in the same folder. 
+It can load brightfield from the reference file (R3D_REF.dv) and channels from the color file (R3D.dv) and returns organized image data.
 
 ---
+
+Nikon files
+------------------------
+**Critical Pattern:**
+
+.. code-block:: text
+
+
+  **image_01.nd2:**
+
+---
+
+TIFF files
+------------------------
+**Critical Pattern:**
+
+.. code-block:: text
+
+
+  **image_01.tif:**
+
 
 File Organization Best Practice
 --------------------------------
@@ -70,18 +90,20 @@ data>image_subdirectory>image_files
 Loading Images in Code
 ------------------------
 
-**Automatic file type detection. DeltaVision, Nikon and TIFF files supported :**
+**Automatic file type detection.** 
+DeltaVision, Nikon and TIFF files supported.
 
 .. code-block:: python
 
     import wormlib
-    
+
     # Path to image subdirectory
     image_path = Path("data/230713_Lp306_L4440_11")
+    output_directory = Path("output/")
     
     result = wormlib.load_images(
         image_path=str(image_path),
-        output_directory="output/",
+        output_directory=str(output_directory),
         channel_names={
             'Cy5': 'set3_mRNA', # Describe what mRNA is in this channel
             'mCherry': 'erm1_mRNA', # Describe what mRNA is in this channel
@@ -98,55 +120,4 @@ Loading Images in Code
         }
     )
 
-WormLib automatically detects ``.dv`` extension and finds both ``_R3D_REF`` and ``_R3D`` files in the same folder. It can load brightfield from the reference file (R3D_REF.dv) and channels from the color file (R3D.dv) and returns organized image data.
 
-**Result structure:**
-
-.. list-table:: Image Data Dictionary
-   :widths: 25 20 55
-   :header-rows: 1
-
-   * - Key
-     - Value/Type
-     - Description
-   * - image_type
-     - str
-     - Image format type (e.g., 'DeltaVision')
-   * - image_name
-     - str
-     - Image filename without extension (e.g., '230713_Lp306_L4440_11')
-   * - bf
-     - numpy array
-     - Brightfield (transmission) 2D image (1024, 1024)
-   * - image_Cy5
-     - numpy array
-     - Channel 0 max projection (Cy5 fluorophore)
-   * - image_mCherry
-     - numpy array
-     - Channel 1 max projection (mCherry fluorophore)
-   * - image_FITC
-     - numpy array
-     - Channel 2 max projection (FITC/GFP fluorophore)
-   * - image_nuclei
-     - numpy array
-     - Channel 3 max projection (DAPI/nuclei stain)
-   * - Cy5_array
-     - numpy array
-     - Channel 0 full 3D volume (Z, Y, X)
-   * - mCherry_array
-     - numpy array
-     - Channel 1 full 3D volume (Z, Y, X)
-   * - FITC_array
-     - numpy array
-     - Channel 2 full 3D volume (Z, Y, X)
-   * - nuclei_array
-     - numpy array
-     - Channel 3 full 3D volume (Z, Y, X)
-   * - grid_width
-     - int
-     - Grid width in pixels (80)
-   * - grid_height
-     - int
-     - Grid height in pixels (80)
-
----
