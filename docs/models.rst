@@ -1,9 +1,75 @@
 Pre-Trained Models
 ==================
 
-WormLib includes pre-trained machine learning models for cell segmentation and classification. These models are optimized for *C. elegans* embryo imaging and are located in the ``models/`` directory.
+WormLib includes pre-trained machine learning models for cell segmentation and classification. These models are optimized for early-stage *C. elegans* embryo imaging and are located in the ``models/`` directory.
 
 ---
+Cellpose Segmentation Model
+----------------------------
+
+**Pre-trained model: ``ce-embryo/``**
+
+Custom Cellpose model trained on *C. elegans* embryo brightfield images.
+
+
+**What it does:**
+
+- Segments individual cells in early-stage embryos from brightfield microscopy
+- Uses diameter optimization (default: 250 pixels)
+- Outputs mask labels (one integer per cell)
+- Separates cells from background and each other
+
+**Architecture:** Cellpose "cyto" model fine-tuned using embryo images
+
+**Input:** Brightfield image (2D or max projection)
+
+**Output:** Segmentation mask (same shape as input, integer labels per cell)
+
+**When to use:**
+
+Enable in config:
+
+.. code-block:: yaml
+
+    pipeline:
+      cell_segmentation: true
+
+**Performance:**
+
+- Typical accuracy: ~90% for 2-cell and 4-cell stages
+- Works best for embryos with clear cell boundaries
+- Fails if cells are heavily overlapped or out-of-focus
+
+---
+
+## Using Model in Code
+
+**Cell Segmentation:**
+
+.. code-block:: python
+
+    import wormlib
+    
+    # Segmentation happens automatically when enabled
+    masks_cytosol, masks_nuclei, _, _ = wormlib.segmentation(
+        image_cytosol=brightfield_image,
+        image_nuclei=dapi_image,
+        second_image_cytosol=dapi_image,
+        output_directory='output/'
+    )
+
+---
+
+Training Custom Models
+-----------------------
+
+To train your own cellpose segmentation model, follow these steps:
+
+1. Visit the original [Cellpose documentation](https://cellpose.readthedocs.io/en/latest/index.html) for detailed instructions on training custom models.
+2. Upload ce-embryo model on Cellpose GUI.
+3. Retrain with your own images by manually segmenting cells to set ground truth.
+5. Save model
+6. Reference in your analysis
 
 Cell Classification Models (Random Forest)
 -------------------------------------------
@@ -66,60 +132,9 @@ Example output:
     4,ABp,0.891
 
 
-Cellpose Segmentation Model
-----------------------------
 
-**Pre-trained model: ``ce-embryo/``**
 
-Custom Cellpose model trained on *C. elegans* embryo brightfield images.
-
-**What it does:**
-
-- Segments individual cells from brightfield microscopy
-- Uses diameter optimization (default: 250 pixels)
-- Outputs mask labels (one integer per cell)
-- Separates cells from background and each other
-
-**Architecture:** Cellpose "cyto" model fine-tuned for embryo images
-
-**Input:** Brightfield image (2D or max projection)
-
-**Output:** Segmentation mask (same shape as input, integer labels per cell)
-
-**When to use:**
-
-Enable in config:
-
-.. code-block:: yaml
-
-    pipeline:
-      cell_segmentation: true
-
-**Performance:**
-
-- Typical accuracy: ~90% for 2-cell and 4-cell stages
-- Works best for embryos with clear cell boundaries
-- Fails if cells are heavily overlapped or out-of-focus
-
----
-
-Using Models in Code
----------------------
-
-**Cell Segmentation:**
-
-.. code-block:: python
-
-    import wormlib
-    
-    # Segmentation happens automatically when enabled
-    masks_cytosol, masks_nuclei, _, _ = wormlib.segmentation(
-        image_cytosol=brightfield_image,
-        image_nuclei=dapi_image,
-        second_image_cytosol=dapi_image,
-        output_directory='output/'
-    )
-
+## Using Models in Code
 **Cell Classification:**
 
 .. code-block:: python
@@ -169,7 +184,7 @@ Model Limitations and Best Practices
 - 2-cell and 4-cell models only (not trained for other stages)
 - Assumes brightfield is of reasonable quality (in-focus, proper exposure)
 - May fail on abnormal embryo morphology
-- Classifier confidence varies by embryo quality
+- Classifier confidence varies by image quality
 
 **Best practices:**
 
@@ -190,11 +205,12 @@ Model Limitations and Best Practices
 
 3. **Validate on a few images first** before batch processing
 
-4. **If results are poor**, consider:
+4. **Classification is directly impacted by segmentation quality. If results are poor**, consider:
 
    - Re-optimizing cell_diameter in config
    - Checking image quality (brightness, contrast, focus)
    - Manually validating a subset of results
+   - Retraining the model with your own labeled data
 
 
 Training Custom Models
@@ -202,31 +218,13 @@ Training Custom Models
 
 To train your own classifiers:
 
-1. Collect labeled training images (segmentation masks + cell identities)
-2. Extract morphological features using WormLib utilities
-3. Train Random Forest in scikit-learn
-4. Save model with joblib
-5. Reference in your analysis
-
-Full training protocol and example code coming in future documentation.
-
----
-
-Citation
---------
-
-If you use WormLib models in your research, please cite:
-
-**Torres, N., et al.** (in preparation). WormLib: Automated image analysis for *C. elegans* embryos.
-
-Pre-trained Cellpose model based on:
-
-**Stringer, C., et al.** (2021). Cellpose: a generalist algorithm for cellular segmentation. *Nature Methods* 18, 100–106.
+1. Acquire images
+2. Manually label cells to set ground truth for training (segmentation masks + cell identities)
+3. Extract morphological features
+4. Train Random Forest in scikit-learn
+5. Save model with joblib
+6. Reference in your analysis
 
 ---
 
-Next Steps
-----------
 
-- See :doc:`settings` to enable/disable models in your config
-- See :doc:`outputs` to interpret classification results
