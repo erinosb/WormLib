@@ -14,6 +14,32 @@ File formats supported by WormLib:
 
 DeltaVision files
 ------------------------
+
+Use one folder per acquisition. A typical DeltaVision folder looks like:
+
+.. code-block:: text
+
+    my_experiment/
+    └── input/
+        └── embryo_001/
+            ├── embryo_001_R3D.dv       # 4D stack: channel, z, y, x
+            └── embryo_001_R3D_REF.dv   # 2D brightfield/reference image
+
+
+WormLib assigns channels by zero-based order. These defaults
+match the bundled example:
+
+| Channel index | WormLib name | Typical use |
+|---------------|--------------|-------------|
+| 0 | `Cy5` | RNA channel 1 |
+| 1 | `mCherry` | RNA channel 2 |
+| 2 | `FITC` | optional channel |
+| 3 | `DAPI` | nuclei |
+
+If your channel order is different, set the `index` field for each channel
+in your input configuration.
+
+
 **Critical Pattern:**
 
 .. code-block:: text
@@ -46,6 +72,21 @@ Nikon files
 
 
   **image_01.nd2:**
+
+
+
+
+For `.nd2`, channels are assigned in this zero-based order by default:
+
+| Channel index | WormLib name | Typical use |
+|---------------|--------------|-------------|
+| 0 | `Cy5` | RNA channel 1 |
+| 1 | `mCherry` | RNA channel 2 |
+| 2 | `FITC` | optional channel |
+| 3 | `DAPI` | nuclei |
+| 4 | `brightfield` | brightfield/reference |
+
+If a channel is missing, set its `name` to `None` in the input configuration in the environment-variable interface.
 
 ---
 

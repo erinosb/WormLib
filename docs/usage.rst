@@ -1,140 +1,8 @@
 Usage
 =====
 
-Running an Analysis
--------------------
+## Building Your Own Pipeline
 
-**1. Run the Bundled Example**
-
-.. code-block:: bash
-
-    python examples/wormlib_example.py
-
-The example analyzes the sample DeltaVision image in ``data/08_dv/`` and writes
-figures, CSV files, and ``report.pdf`` to ``output_temp/``. This is the quickest
-way to confirm that your Python environment, Cellpose, BigFISH, and model files
-are working on your computer.
-
-**2. Prepare Your Own Images**
-
-For the full pipeline, WormLib expects microscopy data with:
-
-- one or more smFISH RNA channels
-- a nuclear channel, typically DAPI
-- a brightfield/reference image for embryo and cell segmentation
-
-Supported input formats are ``.dv``, ``.nd2``, ``.tif``, and ``.tiff``. The command-line
-pipeline works best when you pass a folder containing one embryo/acquisition.
-
-**DeltaVision (.dv) Files**
-
-Use one folder per acquisition. A typical DeltaVision folder looks like:
-
-.. code-block:: text
-
-    my_experiment/
-    └── input/
-        └── embryo_001/
-            ├── embryo_001_R3D.dv       # 4D stack: channel, z, y, x
-            └── embryo_001_R3D_REF.dv   # 2D brightfield/reference image
-
-For ``.dv`` stacks, WormLib assigns channels by zero-based order. These defaults
-match the bundled example:
-
-| Channel index | WormLib name | Typical use |
-|---------------|--------------|-------------|
-| 0 | `Cy5` | RNA channel 1 |
-| 1 | `mCherry` | RNA channel 2 |
-| 2 | `FITC` | optional channel |
-| 3 | `DAPI` | nuclei |
-
-If your channel order is different, set the `index` field for each channel
-in your YAML config, or set `CY5_INDEX`, `MCHERRY_INDEX`, `FITC_INDEX`, and
-`DAPI_INDEX` environment variables when using the legacy env-var interface.
-
-#### Nikon `.nd2`
-
-For `.nd2`, WormLib expects a stack shaped like time/z by channel by y by x.
-Channels are assigned in this zero-based order by default:
-
-| Channel index | WormLib name | Typical use |
-|---------------|--------------|-------------|
-| 0 | `Cy5` | RNA channel 1 |
-| 1 | `mCherry` | RNA channel 2 |
-| 2 | `FITC` | optional channel |
-| 3 | `DAPI` | nuclei |
-| 4 | `brightfield` | brightfield/reference |
-
-If a channel is missing, set its `name` to `null` in the YAML config, or set
-it to `nothing` or `None` in the environment-variable interface.
-
-TIFF loading is available, but the full segmentation + smFISH workflow is most
-straightforward with DV or ND2 data that includes both nuclear and brightfield
-information.
-
-#### Choosing Channels
-
-WormLib uses semantic channel roles. A YAML config file tells WormLib which
-image channel is nuclei, which is brightfield/reference, and which are RNA
-channels.
-
-| Setting | Meaning | Example |
-|---------|---------|---------|
-| `channels.rna[].name` | The RNA label used in output files and plots | `par-3` |
-| `channels.rna[].fluorophore` | The physical fluorophore or microscope channel name, for human readability | `Alexa647` |
-| `channels.rna[].index` | The zero-based position of that RNA in the image stack | `0` |
-| `channels.rna[].spot_radius_nm` | PSF radius in nm as `[Z, Y, X]` | `[1409, 340, 340]` |
-| `channels.rna[].detection_color` | Color used for spot detection overlays | `red` |
-| `channels.nuclei.index` | The zero-based channel position used for nuclei segmentation | `3` |
-| `channels.brightfield.index` | The zero-based channel position used for brightfield/reference, if it is inside the stack | `4` |
-
-The RNA channel names are fully user-defined. They do not need to be `Cy5` or
-`mCherry`. For example, if your only RNA channel is physically Alexa 647, name it
-after the target gene and record the fluorophore separately:
-
-```yaml
-channels:
-  rna:
-    - name: par-3
-      fluorophore: Alexa647
-      index: 0
-      spot_radius_nm: [1409, 340, 340]
-      detection_color: red
-```
-
-To skip a channel, omit it from the config or set its `name` to `null`:
-
-```yaml
-channels:
-  nuclei:
-    name: DAPI
-    index: 3
-  brightfield:
-    name: null
-    index: null
-  rna:
-    - name: my_gene
-      index: 0
-      spot_radius_nm: [1409, 340, 340]
-```
-
-If a channel exists but is in a different position than the bundled example,
-change only the index:
-
-```yaml
-channels:
-  nuclei:
-    name: DAPI
-    index: 0
-  rna:
-    - name: my_gene
-      index: 1
-      spot_radius_nm: [1409, 340, 340]
-```
-
-The channel indices must match the order in the loaded image stack. DeltaVision
-data are treated as `channel, z, y, x`; ND2 data are treated as `time/z, channel,
-y, x`.
 
 #### What Is Required?
 
@@ -154,34 +22,8 @@ necessary** in the current pipeline. If either one is missing, WormLib can still
 run limited spot-detection workflows, but it cannot produce a true embryo/cell
 mask.
 
-### 3. Run Your Own Image Locally
 
-From the repository root, copy one of the example configs, edit the paths and
-channel indices, then run it:
 
-```bash
-conda activate wormlib
-cd /path/to/WormLib
-
-cp config/examples/two_rna_full.yml config/my_experiment.yml
-# edit config/my_experiment.yml for your image paths and channel positions
-python src/wormlib.py --config config/my_experiment.yml
-```
-
-You can override the input and output paths from the command line while keeping
-the rest of the config:
-
-```bash
-python src/wormlib.py --config config/my_experiment.yml \
-  /path/to/my_experiment/input/embryo_001 \
-  /path/to/results/embryo_001
-```
-
-WormLib automatically detects `.dv`, `.nd2`, `.tif`, or `.tiff` files in the
-input path.
-
-The old environment-variable interface still works for existing scripts, but
-YAML configs are the recommended interface for new users.
 
 ### 4. Minimal Channel Workflows
 
@@ -280,46 +122,6 @@ Then run:
 python examples/wormlib_example.py
 ```
 
-### 6. Understand the Outputs
-
-Each output directory can include:
-
-| Output | Description |
-|--------|-------------|
-| `channels_*.png` | Loaded channel overview |
-| `cell_segmentation_*.png` or `embryo_segmentation_*.png` | Segmentation result |
-| `nuclear_segmentation_*.png` | Nuclear-only segmentation (when no brightfield is available) |
-| `features_df_*.csv` | Cell morphology and classifier features |
-| `total_mRNA_counts_*.csv` | Total molecule counts per RNA channel |
-| `per_cell_mRNA_counts_*.csv` | Per-cell counts and predicted labels, when classification succeeds |
-| `quantification_cell_*.csv` | Compatibility copy of per-cell counts for batch aggregation |
-| `per_region_mRNA_counts_*.csv` | Region-level counts when classification is disabled or unavailable |
-| `*_detection_*.png`, `*_threshold_*.png` | BigFISH detection diagnostics |
-| `*_AP_profile_data_*.csv` | RNA density along the AP axis |
-| `*_line_scan_data_*.csv` and `*_line_density_data_*.csv` | ROI line-scan outputs |
-| `report.pdf` | Summary report with figures and tables |
-
-If cell segmentation or blastomere classification is not reliable for an image,
-WormLib falls back to whole-embryo segmentation and skips per-cell labels. If
-neither cell nor embryo segmentation succeeds, spot detection can still run
-using a whole-image mask.
-
-### HPC Batch Processing (SLURM)
-
-```bash
-# Submit one array task per input subfolder.
-# Example: if input/ has 20 embryo folders, use --array=0-19.
-sbatch --array=0-N examples/run-WormLib.sh /path/to/my_experiment
-
-# The script automatically:
-# 1. Processes each image subdirectory
-# 2. Saves timestamped script snapshots
-# 3. Combines per-image CSVs into aggregate outputs
-```
-
-Before submitting, edit `examples/run-WormLib.sh` to match your microscope
-calibration, channel names, channel indices, and desired pipeline switches.
-The SLURM script uses the legacy environment-variable interface.
 
 
 
@@ -371,42 +173,3 @@ Cell segmentation (bf + DAPI)
                               └─ fail ──▶ Whole-image mask
                                             └─ spot detection (image-level counts)
 ```
-
----
-
-## Project Structure
-
-```text
-WormLib/
-├── src/
-│   └── wormlib.py                # Main analysis engine and CLI entry point
-├── examples/
-│   ├── wormlib_example.py        # Pipeline example script
-│   └── run-WormLib.sh            # SLURM batch script
-├── config/
-│   └── examples/                 # Copy-and-edit YAML pipeline configs
-│       ├── two_rna_full.yml
-│       ├── one_rna_full.yml
-│       ├── dapi_one_rna_no_brightfield.yml
-│       └── rna_only_spot_detection.yml
-├── models/                       # Trained ML classifiers
-│   ├── 2-cell_classification_RFmodel.joblib
-│   ├── 4-cell_classification_RFmodel.joblib
-│   └── ce-embryo                 # Cellpose pretrained embryo model
-├── data/                         # Sample microscopy images
-│   ├── 04_dv/                    # DeltaVision samples
-│   ├── 05_dv/
-│   ├── 08_dv/
-│   └── 1886_nd2/                 # Nikon ND2 samples
-├── docs/                         # Documentation and assets
-│   └── WormLib_logo.png
-├── installation/                 # Conda environment files
-│   ├── wormlib.yml               # Default CPU/macOS environment
-│   └── wormlib_cuda.yml          # NVIDIA CUDA environment
-├── .gitignore
-├── requirements.txt              # Python dependencies
-└── LICENSE                       # MIT License
-```
-
----
-

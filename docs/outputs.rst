@@ -186,3 +186,26 @@ spot_radius_ch1 = (1283, 310, 310)  # PSF for channel 1 (mCherry)
 
 ---
 
+### 6. Understand the Outputs
+
+Each output directory can include:
+
+| Output | Description |
+|--------|-------------|
+| `channels_*.png` | Loaded channel overview |
+| `cell_segmentation_*.png` or `embryo_segmentation_*.png` | Segmentation result |
+| `nuclear_segmentation_*.png` | Nuclear-only segmentation (when no brightfield is available) |
+| `features_df_*.csv` | Cell morphology and classifier features |
+| `total_mRNA_counts_*.csv` | Total molecule counts per RNA channel |
+| `per_cell_mRNA_counts_*.csv` | Per-cell counts and predicted labels, when classification succeeds |
+| `quantification_cell_*.csv` | Compatibility copy of per-cell counts for batch aggregation |
+| `per_region_mRNA_counts_*.csv` | Region-level counts when classification is disabled or unavailable |
+| `*_detection_*.png`, `*_threshold_*.png` | BigFISH detection diagnostics |
+| `*_AP_profile_data_*.csv` | RNA density along the AP axis |
+| `*_line_scan_data_*.csv` and `*_line_density_data_*.csv` | ROI line-scan outputs |
+| `report.pdf` | Summary report with figures and tables |
+
+If cell segmentation or blastomere classification is not reliable for an image,
+WormLib falls back to whole-embryo segmentation and skips per-cell labels. If
+neither cell nor embryo segmentation succeeds, spot detection can still run
+using a whole-image mask.
