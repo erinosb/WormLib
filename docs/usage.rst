@@ -1,17 +1,21 @@
-## Usage
+Usage
+=====
 
-### 1. Run the Bundled Example
+Running an Analysis
+-------------------
 
-```bash
-python examples/wormlib_example.py
-```
+**1. Run the Bundled Example**
 
-The example analyzes the sample DeltaVision image in `data/08_dv/` and writes
-figures, CSV files, and `report.pdf` to `output_temp/`. This is the quickest
+.. code-block:: bash
+
+    python examples/wormlib_example.py
+
+The example analyzes the sample DeltaVision image in ``data/08_dv/`` and writes
+figures, CSV files, and ``report.pdf`` to ``output_temp/``. This is the quickest
 way to confirm that your Python environment, Cellpose, BigFISH, and model files
 are working on your computer.
 
-### 2. Prepare Your Own Images
+**2. Prepare Your Own Images**
 
 For the full pipeline, WormLib expects microscopy data with:
 
@@ -19,22 +23,22 @@ For the full pipeline, WormLib expects microscopy data with:
 - a nuclear channel, typically DAPI
 - a brightfield/reference image for embryo and cell segmentation
 
-Supported input formats are `.dv`, `.nd2`, `.tif`, and `.tiff`. The command-line
+Supported input formats are ``.dv``, ``.nd2``, ``.tif``, and ``.tiff``. The command-line
 pipeline works best when you pass a folder containing one embryo/acquisition.
 
-#### DeltaVision `.dv`
+**DeltaVision (.dv) Files**
 
 Use one folder per acquisition. A typical DeltaVision folder looks like:
 
-```text
-my_experiment/
-└── input/
-    └── embryo_001/
-        ├── embryo_001_R3D.dv       # 4D stack: channel, z, y, x
-        └── embryo_001_R3D_REF.dv   # 2D brightfield/reference image
-```
+.. code-block:: text
 
-For `.dv` stacks, WormLib assigns channels by zero-based order. These defaults
+    my_experiment/
+    └── input/
+        └── embryo_001/
+            ├── embryo_001_R3D.dv       # 4D stack: channel, z, y, x
+            └── embryo_001_R3D_REF.dv   # 2D brightfield/reference image
+
+For ``.dv`` stacks, WormLib assigns channels by zero-based order. These defaults
 match the bundled example:
 
 | Channel index | WormLib name | Typical use |
