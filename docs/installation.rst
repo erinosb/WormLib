@@ -6,14 +6,14 @@ Quick Install with Conda
 
 Follow these steps to install WormLib using conda. This method is recommended for most users as it handles dependencies automatically.
 
-**1. Clone the repository:**
+**Step 1: Clone the repository**
 
 .. code-block:: bash
 
     git clone https://github.com/erinosb/WormLib.git
     cd WormLib
 
-**2. Create the conda environment:**
+**Step 2: Create the conda environment**
 
 For CPU-based installation (recommended for most users):
 
@@ -29,7 +29,7 @@ For GPU acceleration (CUDA 11.8):
     conda env create -f installation/wormlib_cuda.yml
     conda activate wormlib
 
-**3. Verify installation:**
+**Step 3: Verify installation**
 
 .. code-block:: python
 
@@ -43,20 +43,49 @@ If the import succeeds, you're ready to go!
 Core Dependencies
 ------------------
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| [BigFISH](https://github.com/fish-quant/big-fish) | 0.6.2 | smFISH spot detection & analysis with LoG filtering and automated thresholding|
-| [Cellpose](https://github.com/MouseLand/cellpose) | 3.1.0 | Deep learning-based cell and embryo segmentation |
-| [scikit-image](https://scikit-image.org/) | 0.23.2 | Image processing & morphology |
-| [scikit-learn](https://scikit-learn.org/) | Conda-managed | Random Forest classifiers (transitive via joblib) |
-| [PyTorch](https://pytorch.org/) | 2.4.1 | GPU backend for Cellpose |
-| [OpenCV](https://opencv.org/) | 4.10.0.84 | Image manipulation without GUI, Contour & ellipse fitting |
-| [nd2](https://github.com/tlambert03/nd2) | 0.10.3 | Nikon ND2 file reader |
-| [tifffile](https://github.com/cgohlke/tifffile) | 2025.6.11 | TIFF file I/O |
-| [PyYAML](https://pyyaml.org/) | ≥ 6.0.1 | YAML configuration parsing |
-| [ReportLab](https://www.reportlab.com/) | ≥ 4.0.8 | PDF report generation |
-| [Pillow](https://python-pillow.org/) | ≥ 10.0 | Image handling for PDF reports |
-| [Python](https://www.python.org/) | 3.11+ | Core programming language |
+.. list-table:: Required Python Packages
+   :widths: 20 15 50
+   :header-rows: 1
+
+   * - Package
+     - Version
+     - Purpose
+   * - `BigFISH <https://github.com/fish-quant/big-fish>`_
+     - 0.6.2
+     - smFISH spot detection & analysis with LoG filtering and automated thresholding
+   * - `Cellpose <https://github.com/MouseLand/cellpose>`_
+     - 3.1.0
+     - Deep learning-based cell and embryo segmentation
+   * - `scikit-image <https://scikit-image.org/>`_
+     - 0.23.2
+     - Image processing & morphology
+   * - `scikit-learn <https://scikit-learn.org/>`_
+     - Conda-managed
+     - Random Forest classifiers (transitive via joblib)
+   * - `PyTorch <https://pytorch.org/>`_
+     - 2.4.1
+     - GPU backend for Cellpose
+   * - `OpenCV <https://opencv.org/>`_
+     - 4.10.0.84
+     - Image manipulation without GUI, contour & ellipse fitting
+   * - `nd2 <https://github.com/tlambert03/nd2>`_
+     - 0.10.3
+     - Nikon ND2 file reader
+   * - `tifffile <https://github.com/cgohlke/tifffile>`_
+     - 2025.6.11
+     - TIFF file I/O
+   * - `PyYAML <https://pyyaml.org/>`_
+     - ≥ 6.0.1
+     - YAML configuration parsing
+   * - `ReportLab <https://www.reportlab.com/>`_
+     - ≥ 4.0.8
+     - PDF report generation
+   * - `Pillow <https://python-pillow.org/>`_
+     - ≥ 10.0
+     - Image handling for PDF reports
+   * - `Python <https://www.python.org/>`_
+     - 3.11+
+     - Core programming language
 
 Full dependency list is maintained in ``requirements.txt`` and environment files.
 
@@ -67,14 +96,11 @@ Troubleshooting
 
 **Environment creation fails**
 
-If conda environment creation fails:
+If conda environment creation fails, try clearing the cache and reinstalling:
 
 .. code-block:: bash
 
-    # Clear conda cache
     conda clean --all
-    
-    # Try creating environment again
     conda env create -f installation/wormlib.yml --force-reinstall
 
 **Import errors after activation**
@@ -88,7 +114,7 @@ Make sure you've activated the correct environment:
 
 **GPU support not working**
 
-If CUDA installation fails or torch doesn't detect your GPU, use CPU I installation instead.
+If CUDA installation fails or torch doesn't detect your GPU, use the CPU installation instead:
 
 .. code-block:: bash
 
@@ -101,12 +127,13 @@ If CUDA installation fails or torch doesn't detect your GPU, use CPU I installat
     conda env create -f installation/wormlib.yml
 
 **Missing data or models**
-There are currently no example datasets included in the repository. Please download your own dv, nd2 or tiff files for analysis.
-The repository includes pre-trained classifiers in the ``models/`` directory. Verify if files are missing:
+
+The repository includes pre-trained classifiers in the ``models/`` directory. There are currently no example datasets included—download your own ``.dv``, ``.nd2``, or ``.tiff`` files for analysis.
+
+Verify that model files exist:
 
 .. code-block:: bash
 
-    # Verify model files exist
     ls models/
     # Expected output:
     # 2-cell_classification_RFmodel.joblib
