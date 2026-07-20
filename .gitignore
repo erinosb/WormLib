@@ -49,3 +49,6 @@ human_genome/
 processing_long_movies/
 data/
 .agent/
+
+# Sphinx docs build artifacts
+docs/_build/
