@@ -2,7 +2,7 @@ Dictionary
 ==============================
 
 
-Input Section
+Input Terms
 --------------
 
 **path** — Directory containing microscopy files (.dv, .nd2, .tiff)
@@ -10,7 +10,7 @@ Input Section
 **output_directory** — Where analysis results will be saved
 
 
-Microscope Section
+Microscope Terms
 -------------------
 
 **voxel_size_nm** — ``[Z, Y, X]`` voxel dimensions in nanometers
@@ -18,7 +18,7 @@ Microscope Section
 For *C. elegans* 4-cell embryos on DeltaVision: ``[1448, 450, 450]``
 
 
-Channels Section
+Channels Terms
 ----------------
 
 Define how to extract channels from your images.
@@ -45,7 +45,7 @@ For each RNA channel:
 - ``detection_color`` — Visualization color for detection plots ("red", "blue", etc.)
 
 
-Segmentation Section
+Segmentation Terms
 ---------------------
 
 **embryo_diameter** — Expected embryo diameter in pixels (for whole-embryo segmentation)
@@ -57,19 +57,4 @@ These values help Cellpose optimize segmentation. Typical values:
 - Embryo diameter: 375–500 pixels
 - Nuclei diameter: 30–70 pixels
 
-
-Pipeline Section
------------------
-
-Control which analysis steps run (true/false):
-
-- **cell_segmentation** — Segment individual cells
-- **cell_classification** — Predict cell identity (AB, ABa, EMS, etc.)
-- **embryo_segmentation** — Segment whole embryo
-- **spot_detection** — Detect individual mRNA spots
-- **heatmaps** — Generate grid-based abundance heatmaps
-- **rna_density** — Analyze RNA density along embryo axis
-- **line_scan** — Generate line scan intensity plots
-
-Disable steps to save computation time if not needed.
 

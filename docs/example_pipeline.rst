@@ -274,6 +274,25 @@ Analysis Pipeline
                        │  + CSV Export│
                        └──────────────┘
 
+
+
+Pipeline Selection
+-----------------
+
+Control which analysis steps run (true/false):
+
+- **cell_segmentation** — Segment individual cells
+- **cell_classification** — Predict cell identity (AB, ABa, EMS, etc.)
+- **embryo_segmentation** — Segment whole embryo
+- **spot_detection** — Detect individual mRNA spots
+- **heatmaps** — Generate grid-based abundance heatmaps
+- **rna_density** — Analyze RNA density along embryo axis
+- **line_scan** — Generate line scan intensity plots
+
+Disable steps to save computation time if not needed.
+
+
+
 Segmentation fallback chain:
 
 .. code-block:: text

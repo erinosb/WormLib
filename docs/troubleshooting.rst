@@ -1,7 +1,5 @@
 Troubleshooting
 ------------------------------
-WormLib generates organized output organized by image name. Each analysis produces visualization PNGs, quantification CSVs, and binary segmentation masks. Outputs are saved flat (no subdirectories) in the image-specific output directory.
-
 
 **No output files generated**
 

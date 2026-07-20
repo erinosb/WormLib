@@ -3,7 +3,6 @@ Pre-Trained Models
 
 WormLib includes pre-trained machine learning models for cell segmentation and classification. These models are optimized for early-stage *C. elegans* embryo imaging and are located in the ``models/`` directory.
 
----
 Cellpose Segmentation Model
 ----------------------------
 
@@ -60,16 +59,6 @@ Enable in config:
 
 ---
 
-Training Custom Models
------------------------
-
-To train your own cellpose segmentation model, follow these steps:
-
-1. Visit the original [Cellpose documentation](https://cellpose.readthedocs.io/en/latest/index.html) for detailed instructions on training custom models.
-2. Upload ce-embryo model on Cellpose GUI.
-3. Retrain with your own images by manually segmenting cells to set ground truth.
-5. Save model
-6. Reference in your analysis
 
 Cell Classification Models (Random Forest)
 -------------------------------------------
@@ -216,7 +205,16 @@ Model Limitations and Best Practices
 Training Custom Models
 -----------------------
 
-To train your own classifiers:
+To train your own cellpose segmentation model, follow these steps:
+
+1. Visit the original [Cellpose documentation](https://cellpose.readthedocs.io/en/latest/index.html) for detailed instructions on training custom models.
+2. Upload ce-embryo model on Cellpose GUI.
+3. Retrain with your own images by manually segmenting cells to set ground truth.
+4. Save model
+5. Reference in your analysis
+
+
+To train your own classifier:
 
 1. Acquire images
 2. Manually label cells to set ground truth for training (segmentation masks + cell identities)

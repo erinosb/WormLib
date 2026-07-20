@@ -1,9 +1,10 @@
 Outputs
-===================================
+=======
 
+WormLib generates organized output organized by image name. Each analysis produces visualization PNGs, quantification CSVs, and binary segmentation masks. Outputs are saved flat (no subdirectories) in the image-specific output directory.
 
 Image Data Dictionary
-----------------------------
+---------------------
 
 .. list-table:: Image Data Dictionary
    :widths: 25 20 55
@@ -52,11 +53,8 @@ Image Data Dictionary
      - int
      - Grid height in pixels (80)
 
----
-
-
 Output Files Reference
--------------------------------
+----------------------
 All output is automatically saved in the image subdirectory after single cell spot detection analysis on ``230713_Lp306_L4440_11``:
 
 
@@ -115,7 +113,7 @@ All output is automatically saved in the image subdirectory after single cell sp
 
 
 CSV Data Format Examples
---------------------------
+------------------------
 
 **total_mRNA_counts_{image_name}.csv** — Quick summary of total counts:
 
@@ -148,10 +146,8 @@ CSV Data Format Examples
 
 
 
----
-
 Interpreting Results
----------------------
+--------------------
 
 **Robust spot detection**
 
@@ -159,7 +155,9 @@ Interpreting Results
 - Not too noisy (false positives from background)
 - Not too conservative (missing real signal)
 - Adjust ``spot_radius_nm`` in your input configutation if results look off
+
 Example PSF values for a DeltaVision microscope:
+
 spot_radius_ch0 = (1409, 340, 340)  # PSF for channel 0 (Cy5)
 spot_radius_ch1 = (1283, 310, 310)  # PSF for channel 1 (mCherry)
 
@@ -172,7 +170,7 @@ spot_radius_ch1 = (1283, 310, 310)  # PSF for channel 1 (mCherry)
 **Cell classification accuracy**
 
 - We encourage all users to inspect the ``predicted_label`` overlay and ``cell_confidence_plot`` to verify that cell identities are assigned correctly. 
-- - Check ``confidence`` column in per_region CSV. Confidence > 0.9 is generally reliable.
+- Check ``confidence`` column in per_region CSV. Confidence > 0.9 is generally reliable.
 - Lower confidence suggests ambiguous cell identity or segmentation artifact
 - If the confidence is low, consider retraining the classifier with your own representative training data.
 - Classification accuracy is directly impacted by the quality of segmentation.
@@ -184,26 +182,41 @@ spot_radius_ch1 = (1283, 310, 310)  # PSF for channel 1 (mCherry)
 - If segmentation is poor, consider adjusting ``segmentation_threshold`` or ``min_region_size`` in your input configuration.
 - Consider improving the ce-embryo single cell segmentation model by re-training on your own images.
 
----
-
-### 6. Understand the Outputs
+6. Understand the Outputs
+-------------------------
 
 Each output directory can include:
 
-| Output | Description |
-|--------|-------------|
-| `channels_*.png` | Loaded channel overview |
-| `cell_segmentation_*.png` or `embryo_segmentation_*.png` | Segmentation result |
-| `nuclear_segmentation_*.png` | Nuclear-only segmentation (when no brightfield is available) |
-| `features_df_*.csv` | Cell morphology and classifier features |
-| `total_mRNA_counts_*.csv` | Total molecule counts per RNA channel |
-| `per_cell_mRNA_counts_*.csv` | Per-cell counts and predicted labels, when classification succeeds |
-| `quantification_cell_*.csv` | Compatibility copy of per-cell counts for batch aggregation |
-| `per_region_mRNA_counts_*.csv` | Region-level counts when classification is disabled or unavailable |
-| `*_detection_*.png`, `*_threshold_*.png` | BigFISH detection diagnostics |
-| `*_AP_profile_data_*.csv` | RNA density along the AP axis |
-| `*_line_scan_data_*.csv` and `*_line_density_data_*.csv` | ROI line-scan outputs |
-| `report.pdf` | Summary report with figures and tables |
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Output
+     - Description
+   * - ``channels_*.png``
+     - Loaded channel overview
+   * - ``cell_segmentation_*.png`` or ``embryo_segmentation_*.png``
+     - Segmentation result
+   * - ``nuclear_segmentation_*.png``
+     - Nuclear-only segmentation (when no brightfield is available)
+   * - ``features_df_*.csv``
+     - Cell morphology and classifier features
+   * - ``total_mRNA_counts_*.csv``
+     - Total molecule counts per RNA channel
+   * - ``per_cell_mRNA_counts_*.csv``
+     - Per-cell counts and predicted labels, when classification succeeds
+   * - ``quantification_cell_*.csv``
+     - Compatibility copy of per-cell counts for batch aggregation
+   * - ``per_region_mRNA_counts_*.csv``
+     - Region-level counts when classification is disabled or unavailable
+   * - ``*_detection_*.png``, ``*_threshold_*.png``
+     - BigFISH detection diagnostics
+   * - ``*_AP_profile_data_*.csv``
+     - RNA density along the AP axis
+   * - ``*_line_scan_data_*.csv`` and ``*_line_density_data_*.csv``
+     - ROI line-scan outputs
+   * - ``report.pdf``
+     - Summary report with figures and tables
 
 If cell segmentation or blastomere classification is not reliable for an image,
 WormLib falls back to whole-embryo segmentation and skips per-cell labels. If
