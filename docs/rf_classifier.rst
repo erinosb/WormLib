@@ -1,5 +1,5 @@
 Cell Classification Models (Random Forest)
-==========================
+==========================================
 
 Used to predict cell identity (blastomere name) based on morphological features.
 
@@ -62,7 +62,7 @@ Example output:
 
 
 Using Models in Code
--------------------
+--------------------
 
 **Cell Classification:**
 

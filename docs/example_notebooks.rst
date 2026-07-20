@@ -1,4 +1,4 @@
-Example pipeline
+Example notebooks
 ======================
 
 WormLib includes example notebooks in ``examples/``:
