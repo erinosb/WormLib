@@ -14,16 +14,14 @@ WormLib is a modular open-source image analysis library for quantifying microsco
 
    installation
    inputs
-   example_pipeline
    outputs
    dictionary
    troubleshooting
-   project_structure
   
 
 .. toctree::
    :maxdepth: 3
-   :caption: MODELS:
+   :caption: PRE-TRAINED MODELS:
 
    cellpose_model
    rf_models
@@ -34,7 +32,7 @@ WormLib is a modular open-source image analysis library for quantifying microsco
    :maxdepth: 3
    :caption: EXAMPLE NOTEBOOKS:
 
-   notebooks
+   example_notebooks
    run_batch
 
    
