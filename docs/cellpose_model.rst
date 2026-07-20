@@ -1,4 +1,4 @@
-Segmentation Models
+Segmentation Models (Cellpose)
 ==================
 
 WormLib includes pre-trained machine learning models for cell segmentation and classification. These models are optimized for early-stage *C. elegans* embryo imaging and are located in the ``models/`` directory.

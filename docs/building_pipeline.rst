@@ -213,7 +213,7 @@ Analysis Pipeline
 
 
 
-Pipeline Selection
+Pipeline building options
 -----------------
 
 Control which analysis steps run (true/false):
@@ -228,9 +228,13 @@ Control which analysis steps run (true/false):
 
 Disable steps to save computation time if not needed.
 
+**Segmentation fallback chain**
 
+If cell segmentation or blastomere classification is not reliable for an image,
+WormLib falls back to whole-embryo segmentation and skips per-cell labels. If
+neither cell nor embryo segmentation succeeds, spot detection can still run
+using a whole-image mask.
 
-Segmentation fallback chain:
 
 .. code-block:: text
 
