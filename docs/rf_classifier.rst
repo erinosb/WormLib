@@ -3,6 +3,9 @@ Cell Classification Models (Random Forest)
 
 Used to predict cell identity (blastomere name) based on morphological features.
 
+2-cell classifier
+------------------
+
 **2-Cell Stage: ``2-cell_classification_RFmodel.joblib``**
 
 Classifies cells into:
@@ -19,8 +22,10 @@ Features used:
 
 **Accuracy:** ~95% on test data
 
-**When to use:** Set ``pipeline.cell_classification: true`` for 2-cell stage embryos
 
+
+4-cell classifier
+------------------
 **4-Cell Stage: ``4-cell_classification_RFmodel.joblib``**
 
 Classifies cells into:
@@ -39,7 +44,6 @@ Features used:
 
 **Accuracy:** ~92% on test data
 
-**When to use:** Set ``pipeline.cell_classification: true`` for 4-cell stage embryos
 
 **Output:**
 
@@ -61,27 +65,46 @@ Example output:
 
 
 
-Using Models in Code
+Using Cell Classification Models in Code
 --------------------
 
 **Cell Classification:**
+**To use:** Set ``pipeline.cell_classification: true`` for 2-cell stage embryos
+
 
 .. code-block:: python
 
     import wormlib
-    from pathlib import Path
-    
-    models_dir = Path('models')
-    model_2cell = models_dir / '2-cell_classification_RFmodel.joblib'
-    
-    features_df = wormlib.classify_2cell(
-        masks_cytosol=segmentation_mask,
-        bf=brightfield_image,
-        image_name='sample_image',
-        output_directory='output/',
-        model_path=str(model_2cell),
-        verbose=True
-    )
+    # Cell classification
+    if run_cell_classifier and masks_cytosol is not None:
+        models_dir = main_dir / "models"
+        model_2cell_path = models_dir / "2-cell_classification_RFmodel.joblib"
+        model_4cell_path = models_dir / "4-cell_classification_RFmodel.joblib"
+        
+        if cell_stage == "2-cell" and model_2cell_path.exists():
+            print("Running 2-cell classifier...")
+            features_df = wormlib.classify_2cell(
+                masks_cytosol=masks_cytosol, 
+                bf=bf,
+                image_name=image_name, 
+                output_directory=output_directory,
+                model_path=str(model_2cell_path), 
+                verbose=True,
+            )
+        elif cell_stage == "4-cell" and model_4cell_path.exists():
+            print("Running 4-cell classifier...")
+            features_df = wormlib.classify_4cell(
+                masks_cytosol=masks_cytosol, 
+                bf=bf,
+                image_name=image_name, 
+                output_directory=output_directory,
+                model_path=str(model_4cell_path), 
+                verbose=True,
+            )
+        else:
+            print(f"Classifier not available for stage '{cell_stage}'")
+            run_cell_classifier = False
+            
     # Returns DataFrame with cell IDs, labels, and confidence scores
 
 ---

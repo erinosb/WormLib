@@ -1,14 +1,14 @@
 Segmentation Models (Cellpose)
 ==================
 
-WormLib includes pre-trained machine learning models for cell segmentation and classification. These models are optimized for early-stage *C. elegans* embryo imaging and are located in the ``models/`` directory.
+WormLib includes pre-trained deep learning Cellpose models for cell segmentation located in the ``models/`` directory.
 
 Cellpose Segmentation Model
 ----------------------------
 
 **Pre-trained model: ``ce-embryo/``**
 
-Custom Cellpose model trained on *C. elegans* embryo brightfield images.
+Custom Cellpose model trained on brightfield images of 2- and 4-cell *C. elegans* embryo.
 
 
 **What it does:**
@@ -24,7 +24,7 @@ Custom Cellpose model trained on *C. elegans* embryo brightfield images.
 
 **Output:** Segmentation mask (same shape as input, integer labels per cell)
 
-**When to use:**
+**To use:**
 
 Enable in config:
 
@@ -41,7 +41,7 @@ Enable in config:
 
 ---
 
-## Using Model in Code
+**Using Models in Code**
 
 **Cell Segmentation:**
 
@@ -50,12 +50,18 @@ Enable in config:
     import wormlib
     
     # Segmentation happens automatically when enabled
-    masks_cytosol, masks_nuclei, _, _ = wormlib.segmentation(
-        image_cytosol=brightfield_image,
-        image_nuclei=dapi_image,
-        second_image_cytosol=dapi_image,
-        output_directory='output/'
-    )
+    if run_cell_segmentation:
+        print("Running cell segmentation...")
+        image_cytosol = bf
+        second_image_cytosol = image_nuclei  # DAPI channel
+        
+        masks_cytosol, masks_nuclei, _, _ = wormlib.segmentation(
+            image_cytosol, 
+            image_nuclei,  # nuclei image
+            second_image_cytosol,
+            output_directory=output_directory,
+        )
+        
 
 ---
 
