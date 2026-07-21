@@ -21,3 +21,14 @@ Most common issues:
 - Verify channel_indices are correct
 - Confirm PSF values are appropriate for your microscope
 
+**Inaccurate segmentation**
+
+- Check you are using the correct model for your data (ce-embryo vs. cyto)
+- Verify channel_indices are correct
+- Adjust segmentation parameters (e.g., threshold, min_size, max_size) to better fit your data
+- Adjust cell/embryo diameter parameters
+
+
+**Inaccurate classification**
+
+- Inspect segmentation masks for obvious errors
