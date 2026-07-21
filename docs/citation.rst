@@ -3,7 +3,7 @@ Citation
 
 If you use WormLib in your research, please cite:
 
-**Torres, N., et al.** (in preparation). WormLib: Automated image analysis for *C. elegans* embryos.
+**Torres, N., et al.** (in preparation, 2026). WormLib: Automated image analysis for *C. elegans* embryos.
 
 
 
